@@ -152,8 +152,8 @@ class InterioreObstructionum {
       : generare = Generare.efectus,
         indicatione = DateTime.now().microsecondsSinceEpoch,
         nonce = BigInt.zero,
-        defensio = [Utils.randomHex(1)],
-        impetus = [Utils.randomHex(1), Utils.randomHex(1), Utils.randomHex(1)];
+        defensio = [Utils.randomHex(2)],
+        impetus = [Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2)];
 
   InterioreObstructionum.confussus(
       {required this.estFurca,
@@ -179,8 +179,8 @@ class InterioreObstructionum {
       : generare = Generare.confussus,
         indicatione = DateTime.now().microsecondsSinceEpoch,
         nonce = BigInt.zero,
-        defensio = [Utils.randomHex(1)],
-        impetus = [Utils.randomHex(1), Utils.randomHex(1), Utils.randomHex(1)];
+        defensio = [Utils.randomHex(2)],
+        impetus = [Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2)];
 
   InterioreObstructionum.expressi(
       {required this.estFurca,
@@ -206,8 +206,8 @@ class InterioreObstructionum {
       : generare = Generare.expressi,
         indicatione = DateTime.now().microsecondsSinceEpoch,
         nonce = BigInt.zero,
-        defensio = [Utils.randomHex(1)],
-        impetus = [Utils.randomHex(1), Utils.randomHex(1), Utils.randomHex(1)];
+        defensio = [Utils.randomHex(2)],
+        impetus = [Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2)];
 
   mine() {
     indicatione = DateTime.now().microsecondsSinceEpoch;
@@ -1149,7 +1149,11 @@ class Obstructionum {
   }
   bool badsewapons() {
     if (interiore.defensio.length != 1) return true;
-    if (interiore.impetus.length != 3 && interiore.impetus.length !=  2) return true;
+    if (interiore.impetus.length != 50) return true;
+    if (interiore.defensio[0].length != 4) return true;
+    for (int i = 0; i < interiore.impetus.length; i++) {
+      if (interiore.impetus[i].length != 4) return true;
+    }
     return false;
   }
   bool convalidandumExpressiMoles() {

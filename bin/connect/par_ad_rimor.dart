@@ -100,6 +100,7 @@ class ParAdRimor {
     ServerSocket serverNervum =
         await ServerSocket.bind(sip[0], int.parse(sip[1]));
     serverNervum.listen((clientis) {
+      clientis.setOption(SocketOption.tcpNoDelay, true);
       utf8.decoder.bind(clientis).listen((eventus) async {
         Print.nota(
             nuntius: 'pervideas ut pari servo suscepit nuntium on $ip',
@@ -1153,7 +1154,7 @@ class ParAdRimor {
         // qi.clientis.destroy();
         pass = true;
         occupatus = false;
-      });
+      }, onDone: () => clientis.destroy(),);
     });
   }
 

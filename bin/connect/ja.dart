@@ -72,6 +72,7 @@ class ParAdRimor {
         await ServerSocket.bind(sip[0], int.parse(sip[1]));
     serverNervum.listen((clientis) {
       utf8.decoder.bind(clientis).listen((eventus) async {
+        clientis.setOption(SocketOption.tcpNoDelay, true);
         Print.nota(
             nuntius: 'pervideas ut pari servo suscepit nuntium on $ip',
             message: 'peer to peer server recieved a message on $ip');
@@ -1079,6 +1080,7 @@ class ParAdRimor {
         String nervuss = bases[random.nextInt(bases.length)];
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
+        nervus.setOption(SocketOption.tcpNoDelay, true);
         nervus.write(json.encode(PetitioObstructionumIncipioPervideasNuntius(
             PervideasNuntiusTitulus.petitioObstructionumIncipio, [ip]).indu()));
         nervus.listen((eventus) async {
@@ -1124,6 +1126,7 @@ class ParAdRimor {
         String nervuss = bases[random.nextInt(bases.length)];
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
+        nervus.setOption(SocketOption.tcpNoDelay, true);
         nervus.write(json.encode(PetitioObstructionumPervideasNuntius(prior.probationem,
             PervideasNuntiusTitulus.petitioObstructionum, []).indu()));
         nervus.listen((eventus) async {

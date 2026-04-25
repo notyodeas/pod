@@ -442,11 +442,13 @@ class Pera {
     BigInt implere = value;
     List<TransactioInput> inputs = [];
     List<TransactioOutput> outputs = [];
+    BigInt una = BigInt.zero;
     for (Tuple3<int, String, TransactioOutput> inOut in outs) {
       inputs.add(TransactioInput(
           inOut.item1, Utils.signum(privatus, inOut.item3), inOut.item2));
       if (inOut.item3.pod < implere) {
-        outputs.add(TransactioOutput(to, inOut.item3.pod));
+        // outputs.add(TransactioOutput(to, inOut.item3.pod));
+        una += inOut.item3.pod;
         implere -= inOut.item3.pod;
       } else if (inOut.item3.pod > implere) {
         outputs.add(TransactioOutput(to, implere));
@@ -457,6 +459,9 @@ class Pera {
         outputs.add(TransactioOutput(to, implere));
         break;
       }
+    }
+    if (una > BigInt.zero) {
+      outputs.add(TransactioOutput(to, una));
     }
     String identitatis = Utils.randomHex(64);
     String ex = privatus.toHex();
