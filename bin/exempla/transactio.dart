@@ -227,6 +227,7 @@ class Transactio {
       }
       zeros += 1;
       mitte.send(Transactio(probationem, interiore));
+      break;
     }
   }
   bool validateBlockreward(Obstructionum incipio) {

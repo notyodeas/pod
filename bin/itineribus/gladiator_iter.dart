@@ -96,7 +96,7 @@ Future<Response> gladiatorSummaBidArma(Request req) async {
     BigInt summaBidnotfixums = await Pera.summaBid(false, probationem, lo);
     ObstructionumArma oa = await Pera.obstructionumArma(probationem, lo);
     return Response.ok(
-        json.encode(SummaBidArma(probationem, summaBidnotlibers, summaBidnotlibers, oa).toJson()));
+        json.encode(SummaBidArma(probationem, summaBidnotlibers, summaBidnotfixums, oa).toJson()));
   } on BadRequest catch (err) {
     return Response.badRequest(body: json.encode(err.toJson()));
   }
