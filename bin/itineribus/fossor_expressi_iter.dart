@@ -70,7 +70,6 @@ Future<Response> fossorExpressi(Request req) async {
     }
     List<Transactio> lttip = [];
     lttip.addAll(par!.liberTransactions);
-    lttip.addAll(prior.interiore.expressiTransactions);
     Iterable<Transactio> ltsr = par!.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!));
     lttip.addAll(ltsr);
     final primis = await Pera.isPrimis(publica, directorium);
