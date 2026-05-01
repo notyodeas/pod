@@ -137,8 +137,15 @@ class FossorPraecipuus {
   FossorPraecipuus();
 
   FossorPraecipuus.coe({ required this.llttbi, required this.lfttbi }): llti = llttbi.map((mlttbi) => mlttbi.interiore.identitatis).toList();
-
-  accipere({ required bool efectus, required int maxime, required Iterable<Transactio> llt, required Iterable<Transactio> lft, required Iterable<Transactio> let, required Iterable<ConnexaLiberExpressi> lcle, required Iterable<SiRemotionem> lsr, required Iterable<Propter> lp, required Iterable<SolucionisPropter> lsp, required Iterable<FissileSolucionisPropter> lfsp, required Iterable<InritaTransactio> lit, required Iterable<Obstructionum> lo }) {      
+  
+  accipere({ 
+    required bool efectus, 
+    required int maxime, 
+    required Iterable<Transactio> llt, 
+    required Iterable<Transactio> lft, 
+    required Iterable<Transactio> let, 
+    required Iterable<ConnexaLiberExpressi> lcle, required Iterable<SiRemotionem> lsr, 
+    required Iterable<Propter> lp, required Iterable<SolucionisPropter> lsp, required Iterable<FissileSolucionisPropter> lfsp, required Iterable<InritaTransactio> lit, required Iterable<Obstructionum> lo }) {      
     Iterable<SiRemotionem> lsrc = List<SiRemotionem>.from(lsr.map((mlsr) => SiRemotionem.fromJson(mlsr.toJson())));
     Iterable<Transactio> lltf = llt.where(
       (wlt) => wlt.interiore.transactioSignificatio != TransactioSignificatio.regularis ||

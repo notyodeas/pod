@@ -24,57 +24,16 @@ Future<Response> fossorEfectus(Request req) async {
     return Response.badRequest(body: json.encode(BadRequest(code: 0, nuntius: 'non habes ius truncum in hac nodo producendi', message: 'you do not have the right to produce a block on this node')));
   }
   List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
-  FossorPraecipuus fp = FossorPraecipuus();
-  fp.accipere(    
-    efectus: true, 
-    maxime: 50, 
-    llt: par!.liberTransactions, 
-    lft: par!.fixumTransactions, 
-    let: par!.expressiTransactions, 
-    lcle: par!.connexiaLiberExpressis, 
-    lsr: par!.siRemotiones, 
-    lp: par!.rationibus, 
-    lsp: par!.solucionisRationibus, 
-    lfsp: par!.fissileSolucionisRationibus, 
-    lit: par!.inritaTransactions,
-    lo: lo
-  );
-  print(fp.lptbi);
   Obstructionum incipio = await Obstructionum.accipereIncipio(directorium);
-  if (await Pera.isPublicaClavisDefended(argumentis!.publicaClavis, lo)) fp.llttbi.insert(0, Transactio.nullam(InterioreTransactio.praemium(argumentis!.publicaClavis, incipio.interiore.praemium!)));
-  final obstructionumDifficultas = await Obstructionum.utDifficultas(lo);
   List<int> on = await Obstructionum.utObstructionumNumerus(lo.last);
-  BigInt numerus = await Obstructionum.numeruo(on);
   Obstructionum prior =
   await Obstructionum.acciperePrior(directorium);
-  for (SiRemotionem sr in fp.lsrtbi.where((wlsr) => wlsr.interiore.siRemotionemInput != null)) {
-    sr.interiore.siRemotionemInput!.interioreTransactio = null;
-  }
-  ReceivePort rp = ReceivePort();
-  InterioreObstructionum interiore = InterioreObstructionum.efectus(
-    estFurca: estFurca,
-    obstructionumDifficultas: obstructionumDifficultas.length,
-    divisa: numerus / await Obstructionum.utSummaDifficultas(lo),
-    forumCap: await Obstructionum.accipereForumCap(lo),
-    liberForumCap: await Obstructionum.accipereForumCapLiberFixum(true, lo),
-    fixumForumCap: await Obstructionum.accipereForumCapLiberFixum(false, lo),
-    summaObstructionumDifficultas: await Obstructionum.utSummaDifficultas(lo),
-    obstructionumNumerus: on,
-    producentis: argumentis!.publicaClavis,
-    priorProbationem: prior.probationem,
-    gladiator: Gladiator.nullam(InterioreGladiator.efectus(
-        outputs: InterioreGladiator.egos(fp.lptbi))),
-    liberTransactions: fp.llttbi,
-    fixumTransactions: fp.lfttbi,
-    expressiTransactions: fp.lettbi,
-    connexaLiberExpressis: fp.lcletbi,
-    siRemotiones: fp.lsrtbi,
-    solucionisRationibus: fp.lsptbi,
-    fissileSolucionisRationibus: fp.lfsptbi,
-    inritaTransactions: fp.littbi,
-    prior: prior);
+  ReceivePort rp = ReceivePort();  
     stamina.efectusThreads.add(await Isolate.spawn(Obstructionum.efectus,
-      List<dynamic>.from([interiore, rp.sendPort])));
+      List<dynamic>.from([estFurca, incipio, on, prior,
+      lo, par!.liberTransactions, par!.fixumTransactions, par!.expressiTransactions,
+      par!.connexiaLiberExpressis, par!.siRemotiones, par!.rationibus, par!.solucionisRationibus, par!.fissileSolucionisRationibus, 
+      par!.inritaTransactions, argumentis!.publicaClavis, rp.sendPort])));
   rp.listen((nuntius) async {
     Obstructionum obstructionum = nuntius as Obstructionum;
     stamina.efectusThreads.forEach((et) => et.kill());

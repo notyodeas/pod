@@ -73,63 +73,15 @@ Future<Response> fossorExpressi(Request req) async {
     lttip.addAll(prior.interiore.expressiTransactions);
     Iterable<Transactio> ltsr = par!.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!));
     lttip.addAll(ltsr);
-    COE coe = await COE.computo(victimaPrimis: ip.victima.primis, inimicusPrimis: inimicusPrimis, maxime: 25, ex: ip.ex, prior: prior, gladiatorVictima: gladiatorVictima, gladiatorInimicus: gladiatorInimicus, llt: lttip, lo: lo);
-    FossorPraecipuus fp = FossorPraecipuus.coe(
-      llttbi: coe.llt, 
-      lfttbi: coe.lft, 
-    );
-    fp.accipere(      
-      efectus: false,
-      maxime: coe.maxime, 
-      llt: lttip, 
-      lft: par!.fixumTransactions, 
-      let: par!.expressiTransactions, 
-      lcle: par!.connexiaLiberExpressis, 
-      lsr: par!.siRemotiones, 
-      lp: par!.rationibus, 
-      lsp: par!.solucionisRationibus,
-      lfsp: par!.fissileSolucionisRationibus,
-      lit: par!.inritaTransactions,
-      lo: lo
-    );
-
-    for (SiRemotionem sr in fp.lsrtbi.where((wlsr) => wlsr.interiore.siRemotionemInput != null)) {
-        sr.interiore.siRemotionemInput?.interioreTransactio = null;
-    }
     final primis = await Pera.isPrimis(publica, directorium);
     final gladiatorIdentitatis =
         await Pera.accipereGladiatorIdentitatis(publica, directorium);  
-    List<String> scuta = await RequiriturInProbationem.requiriturInProbationem(primis, gladiatorIdentitatis, ip.victima, lo);
-    List<int> on = await Obstructionum.utObstructionumNumerus(lo.last);
-    BigInt numerus = await Obstructionum.numeruo(on);
-    final obstructionumDifficultas = await Obstructionum.utDifficultas(lo);
-    InterioreObstructionum interiore = InterioreObstructionum.expressi(
-      estFurca: estFurca,
-      obstructionumDifficultas: obstructionumDifficultas.length,
-      divisa: (numerus / await Obstructionum.utSummaDifficultas(lo)),
-      forumCap: await Obstructionum.accipereForumCap(lo),
-      liberForumCap: await Obstructionum.accipereForumCapLiberFixum(true, lo),
-      fixumForumCap: await Obstructionum.accipereForumCapLiberFixum(false, lo),
-      summaObstructionumDifficultas: await Obstructionum.utSummaDifficultas(lo),
-      obstructionumNumerus: on,
-      producentis: argumentis!.publicaClavis,
-      priorProbationem: prior.probationem,
-      gladiator: Gladiator.nullam(InterioreGladiator.ce(input: 
-      await InterioreGladiator.cegi(privatusClavis: ip.ex, 
-      inimicus: GladiatorInputPar(primis, gladiatorIdentitatis), 
-      victima: GladiatorInputPar(ip.victima.primis, ip.victima.identitatis), lo: lo))),
-      liberTransactions: fp.llttbi,
-      fixumTransactions: fp.lfttbi,
-      expressiTransactions: [],
-      connexaLiberExpressis: [],
-      siRemotiones: fp.lsrtbi,
-      solucionisRationibus: fp.lsptbi,
-      fissileSolucionisRationibus: fp.lfsptbi,
-      inritaTransactions: fp.littbi,
-      prior: prior);
-    ReceivePort acciperePortus = ReceivePort();
+    List<String> scuta = await RequiriturInProbationem.requiriturInProbationem(primis, gladiatorIdentitatis, ip.victima, lo);    ReceivePort acciperePortus = ReceivePort();
     stamina.expressiThreads.add(await Isolate.spawn(Obstructionum.expressi,
-        List<dynamic>.from([interiore, scuta, acciperePortus.sendPort])));
+        List<dynamic>.from([estFurca, ip, primis, gladiatorIdentitatis, argumentis!.publicaClavis,
+        lo, prior, scuta, inimicusPrimis, gladiatorVictima, gladiatorInimicus, lttip,
+        par!.fixumTransactions, par!.expressiTransactions, par!.connexiaLiberExpressis, par!.siRemotiones, par!.rationibus,
+        par!.solucionisRationibus, par!.fissileSolucionisRationibus, par!.inritaTransactions, acciperePortus.sendPort])));
     acciperePortus.listen((nuntius) async {
       Obstructionum obstructionum = nuntius as Obstructionum;
       stamina.expressiThreads.forEach((et) => et.kill(priority: Isolate.immediate));

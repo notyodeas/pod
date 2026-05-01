@@ -2154,6 +2154,10 @@ class ParAdRimor {
           Print.obstructionumReprobatus();
           return false;
         }
+        if (!obstructionum.longitudoTeliFundamentalis()) {
+          Print.obstructionumReprobatus();
+          return false;
+        }
         List<Propter> lp = [];
         obstructionum.interiore.gladiator.interiore.outputs.map((moutputs) => moutputs.rationibus).forEach(lp.addAll);
         for (Propter p in lp) {
