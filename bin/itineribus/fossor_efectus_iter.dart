@@ -13,13 +13,17 @@ import '../exempla/pera.dart';
 import '../exempla/si_remotionem.dart';
 import '../exempla/transactio.dart';
 import '../server.dart';
+import '../exempla/petitio/privatus_clavis.dart';
 
 
 Future<Response> fossorEfectus(Request req) async {
+      PrivatusClavis pc =
+      PrivatusClavis.fromJson(json.decode(await req.readAsString()));
+
   Directory directorium =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
   bool estFurca = bool.parse(req.params['furca']!);
-  String privatus = req.params['privatus']!;
+  String privatus = pc.ex;
   if (PrivateKey.fromHex(Pera.curve(), privatus).publicKey.toHex() != argumentis!.publicaClavis) {
     return Response.badRequest(body: json.encode(BadRequest(code: 0, nuntius: 'non habes ius truncum in hac nodo producendi', message: 'you do not have the right to produce a block on this node')));
   }
