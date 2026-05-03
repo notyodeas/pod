@@ -21,7 +21,7 @@ Future<Response> transactioIdentitatis(Request req) async {
     await for (String obstructionum in Utils.fileAmnis(
         File('${directory.path}${Constantes.caudices}$i.txt'))) {
       obs.add(Obstructionum.fromJson(
-          Encoder.decodeJson(obstructionum) as Map<String, dynamic>));
+          json.decode(obstructionum) as Map<String, dynamic>));
     }
   }
   Obstructionum prior = await Obstructionum.acciperePrior(directory);

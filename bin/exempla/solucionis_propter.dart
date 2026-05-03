@@ -101,7 +101,7 @@ class SolucionisPropter {
   bool estProbationem() {
     if (probationem !=
         HEX.encode(sha512
-            .convert(utf8.encode(Encoder.encodeJson(interioreSolucionisPropter.toJson())))
+            .convert(utf8.encode(json.encode(interioreSolucionisPropter.toJson())))
             .bytes)) {
       Print.nota(nuntius: 'invalidum probationem solucionis rationem', message: 'invalid proof of payment account');      
       return false;
@@ -118,7 +118,7 @@ class SolucionisPropter {
       do {
         interiore.mine();
         probationem = HEX.encode(
-            sha512.convert(utf8.encode(Encoder.encodeJson(interiore.toJson()))).bytes);
+            sha512.convert(utf8.encode(json.encode(interiore.toJson()))).bytes);
       } while (!probationem.startsWith('0' * zeros));
       for (int i = zeros + 1; i < probationem.length; i++) {
         if (probationem.substring(0, i) == ('0' * i)) {
@@ -283,7 +283,7 @@ class FissileSolucionisPropter {
   bool estProbationem() {
     if (probationem !=
         HEX.encode(sha512
-            .convert(utf8.encode(Encoder.encodeJson(interioreFissileSolucionisPropter.toJson())))
+            .convert(utf8.encode(json.encode(interioreFissileSolucionisPropter.toJson())))
             .bytes)) {
       Print.nota(nuntius: 'invalidum probationem solucionis rationem', message: 'invalid proof');
       return false;
@@ -300,7 +300,7 @@ class FissileSolucionisPropter {
       do {
         interiore.mine();
         probationem = HEX.encode(
-            sha512.convert(utf8.encode(Encoder.encodeJson(interiore.toJson()))).bytes);
+            sha512.convert(utf8.encode(json.encode(interiore.toJson()))).bytes);
       } while (!probationem.startsWith('0' * zeros));
       for (int i = zeros + 1; i < probationem.length; i++) {
         if (probationem.substring(0, i) == ('0' * i)) {

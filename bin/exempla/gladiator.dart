@@ -61,7 +61,7 @@ class Propter {
 
   Propter.incipio(this.interiore)
       : probationem = HEX.encode(sha512
-            .convert(utf8.encode(Encoder.encodeJson(interiore.toJson())))
+            .convert(utf8.encode(json.encode(interiore.toJson())))
             .bytes);
   static void quaestum(List<dynamic> argumentis) {
     InteriorePropter interiorePropter = argumentis[0] as InteriorePropter;
@@ -72,7 +72,7 @@ class Propter {
       do {
         interiorePropter.mine();
         probationem = HEX.encode(sha512
-            .convert(utf8.encode(Encoder.encodeJson(interiorePropter.toJson())))
+            .convert(utf8.encode(json.encode(interiorePropter.toJson())))
             .bytes);
       } while (!probationem.startsWith('0' * zeros));
       for (int i = zeros + 1; i < probationem.length; i++) {
@@ -98,7 +98,7 @@ class Propter {
   bool isProbationem() {
     if (probationem ==
         HEX.encode(sha512
-            .convert(utf8.encode(Encoder.encodeJson(interiore.toJson())))
+            .convert(utf8.encode(json.encode(interiore.toJson())))
             .bytes)) {
       return true;
     }
@@ -137,14 +137,14 @@ class GladiatorOutput {
   final String defensio;
   final String impetum;
   GladiatorOutput(this.rationibus)
-      : impetum = Utils.randomHex(2),
-        defensio = Utils.randomHex(2);
+      : impetum = Utils.randomHex(1),
+        defensio = Utils.randomHex(1);
   GladiatorOutput.incipio(String ex, String producentis)
       : rationibus = [
           Propter.incipio(InteriorePropter.incipio(ex, producentis)),
         ],
-        defensio = Utils.randomHex(2),
-        impetum = Utils.randomHex(2);
+        defensio = Utils.randomHex(1),
+        impetum = Utils.randomHex(1);
   Map<String, dynamic> toJson() => {
         JSON.rationibus: rationibus.map((r) => r.toJson()).toList(),
         JSON.defensio: defensio,
@@ -266,7 +266,7 @@ class Gladiator {
   Gladiator(this.probationem, this.interiore);
   Gladiator.nullam(this.interiore)
       : probationem = HEX.encode(sha512
-            .convert(utf8.encode(Encoder.encodeJson(interiore.toJson())))
+            .convert(utf8.encode(json.encode(interiore.toJson())))
             .bytes);
   Map<String, dynamic> toJson() => {
         JSON.probationem: probationem,

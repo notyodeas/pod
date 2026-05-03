@@ -67,6 +67,29 @@ Future<Response> solucionisStatus(Request req) async {
   }
   return Response.notFound("");
 }
+Future<Response> solucionisFissileStatus(Request req) async {
+  String signature = req.params['signature']!;
+  List<Obstructionum> lo = await Obstructionum.getBlocks(Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}'));
+  for (InterioreObstructionum io in lo.map((e) => e.interiore)) {
+    for (FissileSolucionisPropter sp in io.fissileSolucionisRationibus) {
+      if (sp.interioreFissileSolucionisPropter.signature == signature) {
+        return Response.ok(json.encode({
+        'includi': true,
+        'scriptum': sp.toJson()
+      }));
+      }
+    }
+  }
+  for (FissileSolucionisPropter sp in par!.fissileSolucionisRationibus) {
+    if (sp.interioreFissileSolucionisPropter.signature == signature) {
+      return Response.ok(json.encode({
+        'includi': false,
+        'scriptum': sp.toJson()
+      }));
+    }
+    }
+    return Response.notFound("");
+}
 Future<Response> solucionisCashEx(Request req) async {
   SolucionisCashEx sce = SolucionisCashEx.fromJson(await json.decode(await req.readAsString()));
   String publica = PrivateKey.fromHex(Pera.curve(), sce.ex).publicKey.toHex();
