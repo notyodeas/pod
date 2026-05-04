@@ -137,14 +137,14 @@ class GladiatorOutput {
   final String defensio;
   final String impetum;
   GladiatorOutput(this.rationibus)
-      : impetum = Utils.randomHex(1),
-        defensio = Utils.randomHex(1);
+      : impetum = Utils.randomHex(2),
+        defensio = Utils.randomHex(2);
   GladiatorOutput.incipio(String ex, String producentis)
       : rationibus = [
           Propter.incipio(InteriorePropter.incipio(ex, producentis)),
         ],
-        defensio = Utils.randomHex(1),
-        impetum = Utils.randomHex(1);
+        defensio = Utils.randomHex(2),
+        impetum = Utils.randomHex(2);
   Map<String, dynamic> toJson() => {
         JSON.rationibus: rationibus.map((r) => r.toJson()).toList(),
         JSON.defensio: defensio,

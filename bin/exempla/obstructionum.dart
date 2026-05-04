@@ -368,7 +368,7 @@ class Obstructionum {
     FossorPraecipuus fp = FossorPraecipuus();
     fp.accipere(    
       efectus: true, 
-      maxime: 763, 
+      maxime: 7630, 
       llt: lt, 
       lft: fixumTransactions, 
       let: expressiTransactions, 
