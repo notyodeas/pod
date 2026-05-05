@@ -694,7 +694,7 @@ class Obstructionum {
   Future interioreSalvare(File file) async {
     var sink = file.openWrite(mode: FileMode.append);
     sink.write('${json.encode(toJson())}\n');
-    sink.close();
+    await sink.close();
   }
 
   static Future<Obstructionum> accipereIncipio(Directory directorium) async {
@@ -1451,7 +1451,6 @@ class Obstructionum {
     return true;
   }
   bool longitudoTeliFundamentalis() {
-    return true;
     if (interiore.gladiator.interiore.outputs[0].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[1].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[0].impetum.length != 4) return false;

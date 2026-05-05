@@ -1140,7 +1140,7 @@ class ParAdRimor {
           
         }
       });
-      }, onDone: () => serverNervum.close());
+      });
   }
 
   void connect(String taberNodi) async {
