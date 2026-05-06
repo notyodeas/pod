@@ -1233,43 +1233,52 @@ class Obstructionum {
     }
     return true;
   }
+  bool convalidandumTransactions(List<Transactio> lt, List<Obstructionum> lo) {
+    for (Transactio ft in lt) {
+      BigInt totalSpend = BigInt.zero;
+      for (TransactioOutput fto in ft.interiore.outputs) {
+        totalSpend += fto.pod;
+      }
+      BigInt allowedToSpend = BigInt.zero;
+      for (TransactioInput fti in ft.interiore.inputs) {
+        for (Obstructionum o in lo) {
+          for (Transactio sft in o.interiore.fixumTransactions) {
+            if (sft.interiore.identitatis == fti.transactioIdentitatis) {
+              allowedToSpend += sft.interiore.outputs[fti.index].pod;
+            }
+          }
+        }
+      }
+      if (totalSpend != allowedToSpend) return false;
+    }
+    return true;
+  }
 
   bool transactionsIncluduntur(List<Obstructionum> lo) {
-    List<Transactio> llt = [];
-    lo.map((mo) => mo.interiore.liberTransactions).forEach(llt.addAll);
-    List<String> llti = [];
-    llt.map((mlt) => mlt.interiore.identitatis).forEach(llti.add); 
-    // if (!interiore.liberTransactions.every(
-    //   (elt) => elt.interiore.inputs.every(
-    //     (ei) => llti.any((alti) => ei.transactioIdentitatis == alti) || 
-    //     interiore.liberTransactions.any((alt) => alt.interiore.identitatis == ei.transactioIdentitatis)))) {
-    //       print('complainedaboveabove');
-    //   return false;
-    // }
-    List<Transactio> let = [];
-    lo.map((mo) => mo.interiore.expressiTransactions).forEach(let.addAll);
-    List<String> leti = [];
-    let.map((met) => met.interiore.identitatis).forEach(leti.add);
-    if (!interiore.expressiTransactions.every(
-      (eet) => eet.interiore.inputs.every(
-        (ei) => leti.any((aeti) => ei.transactioIdentitatis == aeti) || 
-        llti.any((alti) =>  ei.transactioIdentitatis == alti) || 
-        interiore.liberTransactions.any((alt) => ei.transactioIdentitatis == alt.interiore.identitatis) ||
-        interiore.expressiTransactions.any((aet) => ei.transactioIdentitatis == aet.interiore.identitatis)))) {
-          print('complainedabove');
-          return false;
-    }
-    List<Transactio> lft = [];
-    lo.map((mo) => mo.interiore.fixumTransactions).forEach(lft.addAll);
-    List<String> lfti = [];
-    lft.map((mft) => mft.interiore.identitatis).forEach(lfti.add);
-    if (!interiore.fixumTransactions.every(
-      (eft) => eft.interiore.inputs.every(
-        (ei) => lfti.any((afti) => ei.transactioIdentitatis == afti) ||
-        interiore.fixumTransactions.any((aft) => aft.interiore.identitatis == ei.transactioIdentitatis)))) {
-          print('complainedrighthere');
-          return false;
-        }
+
+    if (!interiore.liberTransactions.every((lt) => TransactioSignificatio.values.contains(lt.interiore.transactioSignificatio))) return false;
+    print('one');
+    if (interiore.generare == Generare.efectus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).length != 1) return false;
+    print('two');
+    if (interiore.generare == Generare.confussus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    print('three');
+    if (interiore.generare == Generare.expressi && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    print('four');
+    if (!interiore.fixumTransactions.every((t) => TransactioSignificatio.values.contains(t.interiore.transactioSignificatio))) return false;
+    print('five');
+    if (interiore.fixumTransactions.where((t) => t.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    print('six');
+    print('seven');
+    List<Transactio> llt = interiore.liberTransactions.where((t) => t.interiore.transactioSignificatio != TransactioSignificatio.praemium && t.interiore.transactioSignificatio != TransactioSignificatio.transform).toList();
+    print('eight');
+    if (!convalidandumTransactions(llt, lo)) return false;
+    print('ninve');
+    List<Transactio> lft = interiore.fixumTransactions.where((t) => t.interiore.transactioSignificatio != TransactioSignificatio.praemium && t.interiore.transactioSignificatio != TransactioSignificatio.transform ).toList();
+    if (!convalidandumTransactions(lft, lo)) return false;
+    print('ten');
+    if (!convalidandumTransactions(interiore.expressiTransactions.toList(), lo)) return false;
+    print('eleven');
+    
     return true;
   }
 

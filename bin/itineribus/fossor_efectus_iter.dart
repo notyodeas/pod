@@ -24,10 +24,14 @@ Future<Response> fossorEfectus(Request req) async {
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
   bool estFurca = bool.parse(req.params['furca']!);
   String privatus = pc.ex;
-  if (PrivateKey.fromHex(Pera.curve(), privatus).publicKey.toHex() != argumentis!.publicaClavis) {
+  String publica = PrivateKey.fromHex(Pera.curve(), privatus).publicKey.toHex();
+  if (publica != argumentis!.publicaClavis) {
     return Response.badRequest(body: json.encode(BadRequest(code: 0, nuntius: 'non habes ius truncum in hac nodo producendi', message: 'you do not have the right to produce a block on this node')));
   }
   List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
+  if (!await Pera.isPublicaClavisDefended(publica, lo)) {
+    return Response.badRequest(body: json.encode(BadRequest(code: 1, nuntius: 'nuntius', message: 'Public key must be defended to produce a block')));
+  }
   Obstructionum incipio = await Obstructionum.accipereIncipio(directorium);
   List<int> on = await Obstructionum.utObstructionumNumerus(lo.last);
   Obstructionum prior =
