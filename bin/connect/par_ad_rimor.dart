@@ -295,10 +295,9 @@ class ParAdRimor {
               LiberTransactioPervideasNuntius.ex(
                   json.decode(msg) as Map<String, dynamic>);
             List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
-            List<Transactio> ltc = List<Transactio>.from(liberTransactions.map((mlt) => Transactio.fromJson(mlt.toJson())));
-            ltc.add(ltpn.transactio);
-            if (await convalidandumLiber(ltc, lo)) {
-              if (liberTransactions.any((alt) =>
+              liberTransactions.removeWhere((t) => HEX.encode(
+            sha512.convert(utf8.encode(json.encode(t.interiore.toJson()))).bytes) != t.probationem);
+            if (liberTransactions.any((alt) =>
                   alt.interiore.identitatis ==
                   ltpn.transactio.interiore.identitatis)) {
                 Transactio lt = liberTransactions.singleWhere((swlt) => swlt.interiore.identitatis == ltpn.transactio.interiore.identitatis);
@@ -331,10 +330,6 @@ class ParAdRimor {
                 pn.accepit.add(ip);
               }
               syncThrough(TransactioGenus.liber, ltpn.transactio, pn.accepit);
-            } else {
-              Print.nota(nuntius: 'transactionis relativus inventus non est sic, haec transactio ad tergum queue movebitur et postea convalescit', message: 'the refered transaction was not found so this transaction will move to the back of the queue and will be validated later');
-              epistulae.add(QueueItem(clientis, msg));
-            }
             break;
           }
           case PervideasNuntiusTitulus.fixumTransactio: {
@@ -342,14 +337,14 @@ class ParAdRimor {
               FixumTransactioPervideasNuntius.ex(
                   json.decode(msg) as Map<String, dynamic>);
             List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
-            List<Transactio> ltc = List<Transactio>.from(fixumTransactions.map((mlt) => Transactio.fromJson(mlt.toJson())));
-            ltc.add(ftpn.transactio);
-            if (await convalidandumLiber(ltc, lo)) {
+            print('fixumlength ${fixumTransactions.length}');
               if (fixumTransactions.any((aft) =>
                   aft.interiore.identitatis ==
                   ftpn.transactio.interiore.identitatis)) {
                     
                 Transactio lt = fixumTransactions.singleWhere((swlt) => swlt.interiore.identitatis == ftpn.transactio.interiore.identitatis);
+                  fixumTransactions.removeWhere((t) => HEX.encode(
+                sha512.convert(utf8.encode(json.encode(t.interiore.toJson()))).bytes) != t.probationem);
                 int zerosOld = 0;
                 for (int i = 1; i < lt.probationem.length; i++) {
                   if (lt.probationem.substring(0, i) == ('0' * i)) {
@@ -369,14 +364,14 @@ class ParAdRimor {
                 fixumTransactions.removeWhere((rwft) =>
                     rwft.interiore.identitatis ==
                     ftpn.transactio.interiore.identitatis);
+                  
               }
-              fixumTransactions.add(ftpn.transactio);
+              if (!fixumTransactions.contains(ftpn.transactio)) fixumTransactions.add(ftpn.transactio);
               if (!pn.accepit.contains(ip)) {
                 pn.accepit.add(ip);
               }
               syncThrough(TransactioGenus.fixum, ftpn.transactio, pn.accepit);
-            }
-            break;
+              break;
           }
           case PervideasNuntiusTitulus.expressiTransactio: {
             ExpressiTransactioPervideasNuntius etpn =
@@ -386,7 +381,9 @@ class ParAdRimor {
             List<Transactio> stagnum = [];
             stagnum.addAll(liberTransactions);
             stagnum.addAll(expressiTransactions);
-            if (await convalidandumLiber(stagnum, lo)) {
+
+                  fixumTransactions.removeWhere((t) => HEX.encode(
+                sha512.convert(utf8.encode(json.encode(t.interiore.toJson()))).bytes) != t.probationem);
               if (expressiTransactions.any((aet) =>
                   aet.interiore.identitatis ==
                   etpn.transactio.interiore.identitatis)) {
@@ -399,12 +396,12 @@ class ParAdRimor {
                     rwet.interiore.identitatis ==
                     etpn.transactio.interiore.identitatis);
               }
-              expressiTransactions.add(etpn.transactio);
+              if (!await convalidandumLiber(stagnum, lo)) break;
+              if (!expressiTransactions.contains(etpn.transactio)) expressiTransactions.add(etpn.transactio);
               if (!pn.accepit.contains(ip)) {
                 pn.accepit.add(ip);
               }
               syncThrough(TransactioGenus.expressi, etpn.transactio, etpn.accepit);
-            }
             break;
           }
           case PervideasNuntiusTitulus.connexaLiberExpressi: {
@@ -422,7 +419,7 @@ class ParAdRimor {
                       'only the owner of a liber transaction can sync an connection to its expressi transaction');
               return;
             }
-            connexiaLiberExpressis.add(clepn.cle);
+            if (!connexiaLiberExpressis.contains(clepn.cle)) connexiaLiberExpressis.add(clepn.cle);
             if (!clepn.accepit.contains(ip)) {
               clepn.accepit.add(ip);
             }
@@ -502,6 +499,8 @@ class ParAdRimor {
           case PervideasNuntiusTitulus.solucionisPropter: {
             SolucionisPropterPervideasNuntius sppn = SolucionisPropterPervideasNuntius.ex(json.decode(msg) as Map<String, dynamic>);
             List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
+            solucionisRationibus.removeWhere((s) => HEX.encode(
+                sha512.convert(utf8.encode(json.encode(s.interioreSolucionisPropter.toJson()))).bytes) != s.probationem); 
             if (!sppn.solucionisPropter.interioreSolucionisPropter.estValidus(lo) || !sppn.solucionisPropter.interioreSolucionisPropter.interioreInterioreSolucionisPropter.nonAccipitEtMittente()) {
               break;
             }
@@ -544,6 +543,8 @@ class ParAdRimor {
           case PervideasNuntiusTitulus.fissileSolucionisPropter: {
             FissileSolucionisPropterPervideasNuntius fsppn = FissileSolucionisPropterPervideasNuntius.ex(json.decode(msg) as Map<String, dynamic>);
             List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
+            fissileSolucionisRationibus.removeWhere((x) => HEX.encode(
+                sha512.convert(utf8.encode(json.encode(x.interioreFissileSolucionisPropter.toJson()))).bytes) != x.probationem);
             if (!fsppn.fissileSolucionisPropter.interioreFissileSolucionisPropter.estValidus(lo)) {
               break;
             }
@@ -574,7 +575,7 @@ class ParAdRimor {
               }
               fissileSolucionisRationibus.removeWhere((rwsr) => rwsr.interioreFissileSolucionisPropter.interioreInterioreFissileSolucionisPropter.solucionis == fsppn.fissileSolucionisPropter.interioreFissileSolucionisPropter.interioreInterioreFissileSolucionisPropter.solucionis); 
             }
-            fissileSolucionisRationibus.add(fsppn.fissileSolucionisPropter);
+            if (!fissileSolucionisRationibus.contains(fsppn.fissileSolucionisPropter)) fissileSolucionisRationibus.add(fsppn.fissileSolucionisPropter);
             if (!fsppn.accepit.contains(ip)) {
               fsppn.accepit.add(ip);
             }
@@ -1254,9 +1255,9 @@ class ParAdRimor {
                         as Map<String, dynamic>);
               Print.nota(
                   nuntius:
-                      'ad summum impedimentum perveneris cum numero ${scenpn.numerus} nodi hodiernae adhuc sync ulteriore si novus clausus additur catenae',
+                      '',
                   message:
-                      'you have reached the highest block with number ${scenpn.numerus} the current node you will still sync further if a new block is added to the chain');
+                      'if your blocknumber was lower than ${scenpn.numerus} you have reached it, otherwise you could not sync');
               break;
             }
             case PervideasNuntiusTitulus.obstructionumReponereUna: {
@@ -1313,7 +1314,7 @@ class ParAdRimor {
           }
         }
       }
-    });
+    }, onDone: () => nervus.destroy());
   }
 
   Future syncPropter(Propter propter) async {
@@ -1327,27 +1328,16 @@ class ParAdRimor {
     rationibus.add(propter);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
-        List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        } else {
-          print('yesisended');
-          String nervuss = acceptum[random.nextInt(acceptum.length)];
-          conatus.add(nervuss);
-          Socket nervus = await Socket.connect(
-           nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
-          nervus.write('${json.encode(PropterPervideasNuntius(propter, PervideasNuntiusTitulus.propter, [ip]).indu())}\x00');
-          // nervus.destroy();
-          break;
-        }
-      } catch (e) {
-        print('couldnotconnect');
-        continue;
-      }
-    }
-    print('bla');      
+      List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
+      
+        print('yesisended');
+        String nervuss = acceptum[random.nextInt(acceptum.length)];
+        conatus.add(nervuss);
+        Socket nervus = await Socket.connect(
+          nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
+        nervus.write('${json.encode(PropterPervideasNuntius(propter, PervideasNuntiusTitulus.propter, [ip]).indu())}\x00');
+        nervus.destroy();
+    
   }
 
   Future syncLiberTransaction(Transactio ltx) async {
@@ -1361,24 +1351,18 @@ class ParAdRimor {
     liberTransactions.add(ltx);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
+    
         List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
+
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(TransactioPervideasNuntius(
           ltx, PervideasNuntiusTitulus.liberTransactio, [ip]).indu())}\x00');
-        // nervus.destroy();        
-        break;
-      } catch (e) {
-        continue;
-      }
-    }
+        nervus.destroy();        
+    
+    
   }
 
   Future syncFixumTransaction(Transactio tx) async {
@@ -1391,19 +1375,13 @@ class ParAdRimor {
     }
     fixumTransactions.add(tx);
     await filterOnline();
-    while (true) {
-      try {
         String nervuss = bases[random.nextInt(bases.length)];
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(TransactioPervideasNuntius(
           tx, PervideasNuntiusTitulus.fixumTransactio, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (e) {
-        continue;
-      }
-    }
+        nervus.destroy();
+    
   }
 
   Future syncExpressiTransaction(Transactio tx) async {
@@ -1417,24 +1395,16 @@ class ParAdRimor {
     expressiTransactions.add(tx);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
-        List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
-        String nervuss = acceptum[random.nextInt(acceptum.length)];
-        conatus.add(nervuss);
-        Socket nervus = await Socket.connect(
-          nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
-        nervus.write('${json.encode(TransactioPervideasNuntius(
-          tx, PervideasNuntiusCasibus.expressiTransactio, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (e) {
-        continue;
-      }
-    } 
+      List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
+      
+      String nervuss = acceptum[random.nextInt(acceptum.length)];
+      conatus.add(nervuss);
+      Socket nervus = await Socket.connect(
+        nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
+      nervus.write('${json.encode(TransactioPervideasNuntius(
+        tx, PervideasNuntiusCasibus.expressiTransactio, [ip]).indu())}\x00');
+      nervus.destroy();
+    
   }
 
   Future syncInritaTransaction(InritaTransactio it) async {
@@ -1444,47 +1414,31 @@ class ParAdRimor {
     inritaTransactions.add(it);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
-        List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
+      List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
+        
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(InritaTransactioPervideasNuntius(it.interiore, PervideasNuntiusTitulus.inritaTransactio, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (e) {
-        continue;
-      }
-    }
+        nervus.destroy();      
   }
   // maby avoid checking just check if any and skippi syncing if already is in the list
   Future syncConnexaLiberExpressi(ConnexaLiberExpressi clep) async {
     connexiaLiberExpressis.add(clep);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
         List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
+        
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(ConnexaLiberExpressiPervideasNuntius(
           clep, PervideasNuntiusTitulus.connexaLiberExpressi, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (e) {
-        continue;
-      } 
-    } 
+        nervus.destroy();
+       
+    
   }
 
   Future syncSiRemotiones(SiRemotionem sr) async {
@@ -1498,24 +1452,15 @@ class ParAdRimor {
     siRemotiones.add(sr);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
+  
         List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(SiRemotionemPervideasNuntius(
           sr, PervideasNuntiusTitulus.siRemotionem, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (_) {
-        continue;
-      }
-    } 
+        nervus.destroy();
   } 
 
   Future syncSolucionisPropter(SolucionisPropter sr) async {
@@ -1525,24 +1470,18 @@ class ParAdRimor {
     solucionisRationibus.add(sr);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
+    
         List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
+    
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(SolucionisPropterPervideasNuntius(
           sr, PervideasNuntiusTitulus.solucionisPropter, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (_) {
-        continue;
-      }
-    }
+        nervus.destroy();
+      
+    
   }
   Future syncFissileSolucionisPropter(FissileSolucionisPropter fsr) async {
     if (fissileSolucionisRationibus.any((afsr) => afsr.interioreFissileSolucionisPropter.interioreInterioreFissileSolucionisPropter.solucionis == fsr.interioreFissileSolucionisPropter.interioreInterioreFissileSolucionisPropter.solucionis)) {
@@ -1551,24 +1490,15 @@ class ParAdRimor {
     fissileSolucionisRationibus.add(fsr);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
-        List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
-        String nervuss = acceptum[random.nextInt(acceptum.length)];
-        conatus.add(nervuss);
-        Socket nervus = await Socket.connect(
-            nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
-        nervus.write('${json.encode(FissileSolucionisPropterPervideasNuntius(
-          fsr, PervideasNuntiusTitulus.fissileSolucionisPropter, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (_) {
-        continue;
-      }
-    }
+    List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
+   
+    String nervuss = acceptum[random.nextInt(acceptum.length)];
+    conatus.add(nervuss);
+    Socket nervus = await Socket.connect(
+        nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
+    nervus.write('${json.encode(FissileSolucionisPropterPervideasNuntius(
+      fsr, PervideasNuntiusTitulus.fissileSolucionisPropter, [ip]).indu())}\x00');
+    nervus.destroy();
   }
   
   Future syncFurca(String summum) async {
@@ -1699,23 +1629,14 @@ class ParAdRimor {
     rationibus.removeWhere((rwrationibus) => rwrationibus.interiore.publicaClavis == rps.publicaClavis);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
+    
         List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(RemovePropterStagnumPervideasNuntius(rps, PervideasNuntiusTitulus.removePropterStagnum, [ip]).indu())}\x00');
-        // nervus.destroy();
-        break;
-      } catch (_) {
-        continue;
-      }
-    }
+        nervus.destroy();
   }
   // proof you are the owner
   Future removeExpressiTransactions(List<String> identitatum) async {
@@ -1734,7 +1655,7 @@ class ParAdRimor {
           identitatum,
           PervideasNuntiusTitulus.removeTransactions,
           [ip]).indu())}\x00');
-      // nervus.destroy();
+      nervus.destroy();
   }
   Future removeLiberTransactions(List<String> identitatum) async {
     liberTransactions.removeWhere(
@@ -1770,7 +1691,7 @@ class ParAdRimor {
           identitatum,
           PervideasNuntiusTitulus.removeTransactions,
           [ip]).indu())}\x00');
-     // nervus.destroy();
+     nervus.destroy();
   }
   // Future removeSiRemotionems(List<String> signatures) async {
   //   siRemotiones.removeWhere((s) => signatures.any((si) => si == s.interiore.signatureInterioreSiRemotionem) || signatures.any((sii) => sii == s.interiore.siRemotionemInput?.siRemotionemSignature));
@@ -1800,7 +1721,7 @@ class ParAdRimor {
       identitatum,
       PervideasNuntiusTitulus.removeConnexaLiberExpressis,
       [ip]).indu())}\x00');
-    // nervus.destroy();
+    nervus.destroy();
   }
 
   Future removeSiRemotionem(SiRemotionemRemoveNuntius srrn) async {
@@ -1810,22 +1731,13 @@ class ParAdRimor {
           siRemotiones.removeWhere((rwsr) => rwsr.interiore.signatureInterioreSiRemotionem == srrn.signatureIdentitatis);
           await filterOnline();
           List<String> conatus = [];
-          while (true) {
-            try {
-              List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-              if (acceptum.isEmpty) {
-                break;
-              }
+            List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
               String nervuss = acceptum[random.nextInt(acceptum.length)];
               conatus.add(nervuss);
               Socket nervus = await Socket.connect(
                 nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
                 nervus.write('${json.encode(RemoveSiRimotionemRemovePervideasNuntius(srrn, PervideasNuntiusTitulus.removeSiRemotionem, [ip]).indu())}\x00');
               nervus.destroy();
-            } catch (_) {
-              continue;
-            }
-          }
     }
   }
 
@@ -1846,29 +1758,42 @@ class ParAdRimor {
     it.liber ? liberTransactions.remove(t) : fixumTransactions.remove(t);
     await filterOnline();
     List<String> conatus = [];
-    while (true) {
-      try {
+    
         List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
-        if (acceptum.isEmpty) {
-          break;
-        }
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
           nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(InritaTransactioPervideasNuntius(it, PervideasNuntiusTitulus.inritaTransactio, [ip]).indu())}\x00');
         nervus.destroy();
-        break;
-      } catch (_) {
-        continue;
-      } 
-    }
+      
   }
 
   Future syncBlock(Obstructionum o) async {
     stamina.efectusThreads.forEach((et) => et.kill(priority: Isolate.immediate));
     stamina.confussusThreads.forEach((ct) => ct.kill(priority: Isolate.immediate));
     stamina.expressiThreads.forEach((et) => et.kill(priority: Isolate.immediate));
+    //todo all mining waiting things
+    // for (Transactio lt in o.interiore.liberTransactions) {
+    //   isolates.liberTxIsolates[lt.interiore.identitatis]!.kill(priority: Isolate.immediate);
+    // }
+    // for (Transactio ft in o.interiore.fixumTransactions) {
+    //   isolates.fixumTxIsolates[ft.interiore.identitatis]!.kill(priority: Isolate.immediate);
+    // }
+    // List<Propter> propters = [];
+    // o.interiore.gladiator.interiore.outputs.map((x) => x.rationibus).forEach(propters.addAll);
+    // for (Propter p in propters) {
+    //   isolates.propterIsolates[p.interiore.publicaClavis]!.kill(priority: Isolate.immediate);
+    // }
+    // for (SiRemotionem sr in o.interiore.siRemotiones) {
+    //   isolates.siRemotionemIsolates[sr.interiore.signatureInterioreSiRemotionem]!.kill(priority: Isolate.immediate);
+    // }
+    // for (SolucionisPropter sp in o.interiore.solucionisRationibus) {
+    //   isolates.solocionisRationem[sp.interioreSolucionisPropter.interioreInterioreSolucionisPropter.solucionis]!.kill();
+    // }
+    // for (FissileSolucionisPropter fsp in o.interiore.fissileSolucionisRationibus) {
+    //   isolates.fissileSolocionisRationem[fsp.interioreFissileSolucionisPropter.interioreInterioreFissileSolucionisPropter.solucionis]!.kill();
+    // }
     Obstructionum prior = await Obstructionum.acciperePrior(directorium);
     if (o.interiore.priorProbationem != prior.probationem) {
       Print.nota(nuntius: 'invalidum obstructionum ad sync abortivum', message: 'invalid block to sync aborting');
@@ -2011,6 +1936,10 @@ class ParAdRimor {
       Print.nota(nuntius: 'probationem congruit prior probationem', message: 'proof did not match previous proof');
       return false;
     }
+    if (!await Pera.isPublicaClavisDefended(obstructionum.interiore.producentis, lo)) {
+      Print.nota(nuntius: 'nuntius', message: 'Producentis key must be defended');
+      return false;
+    }
     if (!obstructionum.isProbationem()) {
       Print.nota(
           nuntius:
@@ -2018,6 +1947,14 @@ class ParAdRimor {
           message:
               'Hashing the block does not resolve into the proof or block hash');
       Print.obstructionumReprobatus();
+      return false;
+    }
+    if (!obstructionum.convalidandumGenerare()) {
+      Print.nota(nuntius: 'nuntius', message: 'Generare is wrong');
+      return false;
+    }
+    if (!obstructionum.txOnlyOnce()) {
+      Print.nota(nuntius: 'nuntius', message: 'duplicate tx found');
       return false;
     }
     if (!obstructionum.transactionsIncluduntur(lo)) {
@@ -2031,6 +1968,10 @@ class ParAdRimor {
             'obstructionum ineuntes continet vestra corrumpere transactions',
         message: 'your incoming block contains corrupt transactions');
       Print.obstructionumReprobatus();
+      return false;
+    }
+    if (!await convalidandumLiber(obstructionum.interiore.fixumTransactions, lo)) {
+      Print.nota(nuntius: 'nuntius', message: 'invalid fixum tx');
       return false;
     }
     if (obstructionum.badsewapons()) {
@@ -2164,18 +2105,6 @@ class ParAdRimor {
             Print.obstructionumReprobatus();
             return false;
           }
-
-          // hmm this would actually fail to
-          if (!await obstructionum.convalidandumObsturcutionumNumerus(
-              incipio, lo.last)) {
-            Print.nota(
-                nuntius:
-                    'Mittens huius obstructionum conatur cibum usque ad numerum obstructionum',
-                message:
-                    'the sender of this block is trying to mess up the block number');
-            Print.obstructionumReprobatus();
-            return false;
-          }
           break;
         }
       case Generare.efectus:
@@ -2184,16 +2113,6 @@ class ParAdRimor {
               nuntius:
                   'hoc est Mittens obstructionum praemia corrupta est obstructionum',
               message: 'the sender of this block has corrupted block rewards');
-          Print.obstructionumReprobatus();
-          return false;
-        }
-        if (!await obstructionum.convalidandumObsturcutionumNumerus(
-            incipio, lo.last)) {
-          Print.nota(
-              nuntius:
-                  'Mittens huius obstructionum conatur cibum usque ad numerum obstructionum',
-              message:
-                  'the sender of this block is trying to mess up the block number');
           Print.obstructionumReprobatus();
           return false;
         }
@@ -2342,6 +2261,7 @@ class ParAdRimor {
         print('echtwaar');
         return false;
     }
+
     return true;
   }
 

@@ -1294,23 +1294,6 @@ class Obstructionum {
     return counter;
   }
 
-  Future<bool> convalidandumObsturcutionumNumerus(
-      Obstructionum incipio, Obstructionum prioro) async {
-    for (int i = 0;
-        i > prioro.interiore.obstructionumNumerus.length;
-        i++) {
-      if (interiore.obstructionumNumerus.any((eon) =>
-          eon > incipio.interiore.numeruCuneosMaximumsOrdinata!)) {
-        return false;
-      }
-      if (!interiore.obstructionumNumerus.every((eon) =>
-          eon <=
-          incipio.interiore.numeruCuneosMaximumsOrdinata!)) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   // Future<List<SiRemotionemOutput>> inconsumptusRemotionems(
   //     List<Obstructionum> lo) async {
@@ -1399,6 +1382,10 @@ class Obstructionum {
     }
     return false;
   }
+  bool convalidandumGenerare() {
+    if (!Generare.values.contains(interiore.generare)) return false;
+    return true;
+  }
   bool convalidandumExpressiMoles() {
     List<Iterable<Transactio>> lllt = [];
     List<String> lltiti = [];
@@ -1456,6 +1443,24 @@ class Obstructionum {
           return false;
         }
       }
+    }
+    return true;
+  }
+  bool txOnlyOnce() {
+    List<String> identitatumLiber = [];
+    for (Transactio t in interiore.liberTransactions) {
+      if (identitatumLiber.contains(t.interiore.identitatis)) return false;
+      identitatumLiber.add(t.interiore.identitatis);
+    }
+    List<String> identitatumFixum = [];
+    for (Transactio t in interiore.fixumTransactions) {
+      if (identitatumFixum.contains(t.interiore.identitatis)) return false;
+      identitatumFixum.add(t.interiore.identitatis);
+    }
+    List<String> identitatumExpressi = [];
+    for (Transactio t in interiore.expressiTransactions) {
+      if (identitatumExpressi.contains(t.interiore.identitatis)) return false;
+      identitatumExpressi.add(t.interiore.identitatis);
     }
     return true;
   }
