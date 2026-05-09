@@ -191,8 +191,8 @@ Future<Response> propterHabetBid(Request req) async {
   Directory directorium =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
   List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
-  final BigInt liber = await Pera.habetBid(true, publica, lo);
-  final BigInt fixum = await Pera.habetBid(false, publica, lo);
+  final BigInt liber = Pera.habetBid(true, publica, lo);
+  final BigInt fixum = Pera.habetBid(false, publica, lo);
   return Response.ok(json.encode({
     "liber": liber.toString(),
     "fixum": fixum.toString()
@@ -202,7 +202,7 @@ Future<Response> propterHabetBid(Request req) async {
 Future<Response> propterStagnumRemove(Request req) async {
   String ex = req.params['ex']!;
   RemovePropterStagnum rps = RemovePropterStagnum(ex, PrivateKey.fromHex(Pera.curve(), ex).publicKey.toHex());
-  par!.removePropterStagnum(rps);
+  par!.removePropterStagnum([rps.publicaClavis].toList());
   return Response.ok(json.encode({
     "nuntius": "remota propter a piscinam",
     "message": "removed propter from pool"

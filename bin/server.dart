@@ -47,7 +47,7 @@ final _router = Router().plus
   ..post('/obstructionum-numerus', obstructionumPerNumerus)
   ..post('/obstructionum-probationem-jugum', obstructionumProbationemJugum)
   ..get('/obstructionum-prior', obstructionumPrior)
-  ..delete('/obstructionum-removere-ultimum/<ex>', obstructionumRemovereUltimum)
+  ..delete('/obstructionum-removere-ultimum', obstructionumRemovereUltimum)
   ..delete('/obstructionum-removere-ad-probationem/<probationem>', obstructionumRemovereAdProbationem)
   ..get('/obstructionum-probationems', obstructionumProbationems)
   ..post('/fossor-efectus/<furca>', fossorEfectus)

@@ -21,6 +21,7 @@ import '../exempla/constantes.dart';
 import 'package:collection/collection.dart';
 import 'package:elliptic/elliptic.dart';
 import 'package:encoder/encoder.dart';
+import '../exempla/petitio/privatus_clavis.dart';
 
 Future<Response> obstructionumPerNumerus(Request req) async {
   final List<int> on = List<int>.from(json.decode(await req.readAsString()));
@@ -47,7 +48,9 @@ Future<Response> obstructionumPrior(Request req) async {
 }
 
 Future<Response> obstructionumRemovereUltimum(Request req) async {
-  String ex = req.params['ex']!;
+  PrivatusClavis pc =
+      PrivatusClavis.fromJson(json.decode(await req.readAsString()));
+  String ex = pc.ex;
   PrivateKey pk = PrivateKey.fromHex(Pera.curve(), ex);
   if (pk.publicKey.toHex() != argumentis!.publicaClavis) {
     return Response.badRequest(body: json.encode(BadRequest(code: 0, nuntius: 'non producentis nodi', message: 'You are not the producer of the node')));
@@ -64,8 +67,8 @@ Future<Response> obstructionumRemovereUltimum(Request req) async {
     }));
   }
   await Obstructionum.removereUltimumObstructionum(directorium);
-  par!.liberTransactions = [];
-  par!.fixumTransactions = [];
+  par!.liberTransactions = Set();
+  par!.fixumTransactions = Set();
   par!.rationibus = [];
   stamina.efectusThreads = [];
   return Response.ok(json.encode({

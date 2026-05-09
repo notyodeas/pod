@@ -228,9 +228,7 @@ class Pera {
       outs.removeWhere((element) => tx.interiore.inputs
           .any((ischin) => ischin.transactioIdentitatis == element.item2));
       for (int i = 0; i < tx.interiore.outputs.length; i++) {
-        PrivateKey pk = PrivateKey.fromHex(Pera.curve(), privatus);
-        if (tx.interiore.outputs[i].publicaClavis ==
-            pk.publicKey.toHex()) {
+        if (tx.interiore.outputs[i].publicaClavis == publica) {
           outs.add(Tuple3<int, String, TransactioOutput>(
               i,
               tx.interiore.identitatis,
@@ -238,6 +236,7 @@ class Pera {
         }
       }
     }
+    print(outs);
     if (outs.isEmpty) {
       return Tuple2(null, null);
     }
@@ -443,6 +442,8 @@ class Pera {
     List<TransactioInput> inputs = [];
     List<TransactioOutput> outputs = [];
     BigInt una = BigInt.zero;
+    print('timeforouts');
+    print(outs);
     for (Tuple3<int, String, TransactioOutput> inOut in outs) {
       inputs.add(TransactioInput(
           inOut.item1, Utils.signum(privatus, inOut.item3), inOut.item2));

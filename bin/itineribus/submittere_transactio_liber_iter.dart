@@ -54,6 +54,8 @@ Future<Response> submittereTransactioLiber(Request req) async {
           limit -= to.pod;
       }
     }
+    print('isprobationem');
+    print(isProbationum);
     if (st.pod > limit && !isProbationum) {
       return Response.badRequest(body: json.encode(BadRequest(code: 2, nuntius: 'non plus pecuniae tum modus $limit POD', message: 'can not spend more money then your limit of $limit POD', falses: "not coulds yes epsnd lesses frees not thans ises ilmits not ofs $limit not POD")));
     }
@@ -72,7 +74,7 @@ Future<Response> submittereTransactioLiber(Request req) async {
         body: json.encode(BadRequest(code: 4, nuntius: 'mittens pecuniam penitus', message: 'sender of money is in depth', falses: "ceivers not ofs frees wases out edpth").toJson())
       );
     }
-    List<Transactio> stagnum = par!.liberTransactions;
+    List<Transactio> stagnum = par!.liberTransactions.toList();
     // stagnum.addAll(par!.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!)));
     // print('stagnumotherloctobeprinted\n ${par!.liberTransactions.map((e) => e.toJson())}');
     if (isp) {
@@ -107,7 +109,10 @@ Future<Response> submittereTransactioLiber(Request req) async {
           to: st.to,
           transactioStagnum: stagnum,
           lo: lo));      
-        Transactio? frt = par!.liberTransactions.singleWhereOrNull((swonlt) =>  liber.interiore.inputs.any((ainputs) => ainputs.transactioIdentitatis == swonlt.interiore.identitatis));
+        List<Transactio> mlt = [];
+        mlt.addAll(par!.liberTransactions);
+        mlt.addAll(par!.expressiTransactions);
+        Transactio? frt = mlt.singleWhereOrNull((swonlt) =>  liber.interiore.inputs.any((ainputs) => ainputs.transactioIdentitatis == swonlt.interiore.identitatis));
         List<String> ettri = [];
         while (frt != null) {
           print('ilooploop');
@@ -116,7 +121,7 @@ Future<Response> submittereTransactioLiber(Request req) async {
             await par!.removeConnexaLiberExpressis([cle.interioreConnexaLiberExpressi.identitatis]);
             cle.interioreConnexaLiberExpressi.identitatum.forEach(ettri.add);
           }
-          frt = par!.liberTransactions.singleWhereOrNull((swonlt) => frt!.interiore.inputs.any((ainputs) => ainputs.transactioIdentitatis == swonlt.interiore.identitatis));
+          frt = mlt.singleWhereOrNull((swonlt) => frt!.interiore.inputs.any((ainputs) => ainputs.transactioIdentitatis == swonlt.interiore.identitatis));
         }
         List<Transactio> letti = [];
         letti.add(Transactio.nullam(await Pera.novamExpressi(ex: st.ex, to: st.to, value: st.pod, regularis: liber)));
@@ -128,6 +133,8 @@ Future<Response> submittereTransactioLiber(Request req) async {
           }
           letti.add(Transactio.nullam(await Pera.novamExpressi(ex: st.ex, to: ett.interiore.recipiens , value: pod, regularis: letti.last)));
         }
+        await par!.removeExpressiTransactions(ettri);
+
         // await par!.removeExpressiTransactions(ettri);
         final InterioreConnexaLiberExpressi icle = InterioreConnexaLiberExpressi(
           identitatis: liber.interiore.identitatis,

@@ -78,14 +78,14 @@ class ParAdRimor {
   List<int> summaScandalumNumerus = [];
   List<String> bases = [];
   List<Propter> rationibus = [];
-  List<Transactio> liberTransactions = [];
-  List<Transactio> fixumTransactions = [];
-  List<Transactio> expressiTransactions = [];
-  List<InritaTransactio> inritaTransactions = [];
-  List<SiRemotionem> siRemotiones = [];
-  List<ConnexaLiberExpressi> connexiaLiberExpressis = [];
-  List<SolucionisPropter> solucionisRationibus = [];
-  List<FissileSolucionisPropter> fissileSolucionisRationibus = [];
+  Set<Transactio> liberTransactions = Set();
+  Set<Transactio> fixumTransactions = Set();
+  Set<Transactio> expressiTransactions = Set();
+  Set<InritaTransactio> inritaTransactions = Set();
+  Set<SiRemotionem> siRemotiones = Set();
+  Set<ConnexaLiberExpressi> connexiaLiberExpressis = Set();
+  Set<SolucionisPropter> solucionisRationibus = Set();
+  Set<FissileSolucionisPropter> fissileSolucionisRationibus = Set();
   List<Isolate> syncBlocks = [];
 
   List<QueueItem> epistulae = [];
@@ -120,14 +120,14 @@ class ParAdRimor {
             InConnectPervideasNuntius icpn = InConnectPervideasNuntius(
                 bases: bases,
                 rationibus: rationibus,
-                liberTansactions: liberTransactions,
-                fixumTransactions: fixumTransactions,
-                expressiTransactions: expressiTransactions,
-                inritaTransactions: inritaTransactions,
-                siRemotionems: siRemotiones,
-                connexaLiberExpressis: connexiaLiberExpressis,
-                solucionisRationibus: solucionisRationibus,
-                fissileSolucionisRationibus: fissileSolucionisRationibus,
+                liberTansactions: liberTransactions.toList(),
+                fixumTransactions: fixumTransactions.toList(),
+                expressiTransactions: expressiTransactions.toList(),
+                inritaTransactions: inritaTransactions.toList(),
+                siRemotionems: siRemotiones.toList(),
+                connexaLiberExpressis: connexiaLiberExpressis.toList(),
+                solucionisRationibus: solucionisRationibus.toList(),
+                fissileSolucionisRationibus: fissileSolucionisRationibus.toList(),
                 titulus: PervideasNuntiusTitulus.onConnect,
                 accepit: List<String>.from([ip]));
             clientis.write('${json.encode(icpn.indu())}\x00');
@@ -616,7 +616,7 @@ class ParAdRimor {
           case PervideasNuntiusTitulus.removePropterStagnum: {
             RemovePropterStagnumPervideasNuntius rpspn = 
             RemovePropterStagnumPervideasNuntius.ex(json.decode(msg) as Map<String, dynamic>);
-            rationibus.removeWhere((rwrationibus) => rpspn.rps.publicaClavis == rwrationibus.interiore.publicaClavis);
+            rationibus.removeWhere((rwrationibus) => rpspn.publicas.any((p) => p == rwrationibus.interiore.publicaClavis));
             if (!rpspn.accepit.contains(ip)) {
               rpspn.accepit.add(ip);
             }
@@ -747,6 +747,9 @@ class ParAdRimor {
             List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
             List<Obstructionum> foramenFurca = await Obstructionum.getExitusBlocks();
             List<Obstructionum> tridentes = await Obstructionum.getLatusBlocks();
+            print('probationems');
+            print(opn.obstructionum.interiore.priorProbationem);
+            print(prioro.probationem);
             if (opn.obstructionum.interiore.priorProbationem !=
                 prioro.probationem) {
               if (!lo.map((mo) => mo.probationem).contains(opn
@@ -1625,8 +1628,8 @@ class ParAdRimor {
     });
   }
 
-  Future removePropterStagnum(RemovePropterStagnum rps) async {
-    rationibus.removeWhere((rwrationibus) => rwrationibus.interiore.publicaClavis == rps.publicaClavis);
+  Future removePropterStagnum(List<String> publicas) async {
+    rationibus.removeWhere((rwrationibus) => publicas.any((p) => p == rwrationibus.interiore.publicaClavis));
     await filterOnline();
     List<String> conatus = [];
     
@@ -1635,7 +1638,7 @@ class ParAdRimor {
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
-        nervus.write('${json.encode(RemovePropterStagnumPervideasNuntius(rps, PervideasNuntiusTitulus.removePropterStagnum, [ip]).indu())}\x00');
+        nervus.write('${json.encode(RemovePropterStagnumPervideasNuntius(publicas, PervideasNuntiusTitulus.removePropterStagnum, [ip]).indu())}\x00');
         nervus.destroy();
   }
   // proof you are the owner
@@ -1773,27 +1776,6 @@ class ParAdRimor {
     stamina.efectusThreads.forEach((et) => et.kill(priority: Isolate.immediate));
     stamina.confussusThreads.forEach((ct) => ct.kill(priority: Isolate.immediate));
     stamina.expressiThreads.forEach((et) => et.kill(priority: Isolate.immediate));
-    //todo all mining waiting things
-    // for (Transactio lt in o.interiore.liberTransactions) {
-    //   isolates.liberTxIsolates[lt.interiore.identitatis]!.kill(priority: Isolate.immediate);
-    // }
-    // for (Transactio ft in o.interiore.fixumTransactions) {
-    //   isolates.fixumTxIsolates[ft.interiore.identitatis]!.kill(priority: Isolate.immediate);
-    // }
-    // List<Propter> propters = [];
-    // o.interiore.gladiator.interiore.outputs.map((x) => x.rationibus).forEach(propters.addAll);
-    // for (Propter p in propters) {
-    //   isolates.propterIsolates[p.interiore.publicaClavis]!.kill(priority: Isolate.immediate);
-    // }
-    // for (SiRemotionem sr in o.interiore.siRemotiones) {
-    //   isolates.siRemotionemIsolates[sr.interiore.signatureInterioreSiRemotionem]!.kill(priority: Isolate.immediate);
-    // }
-    // for (SolucionisPropter sp in o.interiore.solucionisRationibus) {
-    //   isolates.solocionisRationem[sp.interioreSolucionisPropter.interioreInterioreSolucionisPropter.solucionis]!.kill();
-    // }
-    // for (FissileSolucionisPropter fsp in o.interiore.fissileSolucionisRationibus) {
-    //   isolates.fissileSolocionisRationem[fsp.interioreFissileSolucionisPropter.interioreInterioreFissileSolucionisPropter.solucionis]!.kill();
-    // }
     Obstructionum prior = await Obstructionum.acciperePrior(directorium);
     if (o.interiore.priorProbationem != prior.probationem) {
       Print.nota(nuntius: 'invalidum obstructionum ad sync abortivum', message: 'invalid block to sync aborting');
@@ -1836,7 +1818,15 @@ class ParAdRimor {
         isSalvare = true;          
         await oispn.obstructionum.salvare(directorium);
         isSalvare = false;
-        removerePropterNovumObstructionum(prior, oispn.obstructionum);    
+        removerePropterNovumObstructionum(prior, oispn.obstructionum);  
+        removeFixumTransactions(o.interiore.fixumTransactions.map((f) => f.interiore.identitatis).toList());
+        removeLiberTransactions(o.interiore.liberTransactions.map((l) => l.interiore.identitatis).toList()); 
+        removeExpressiTransactions(o.interiore.expressiTransactions.map((l) => l.interiore.identitatis).toList()) ;
+        removeConnexaLiberExpressis(o.interiore.connexaLiberExpressis.map((c) => c.interioreConnexaLiberExpressi.identitatis).toList());
+        List<Propter> propters = [];
+        o.interiore.gladiator.interiore.outputs.map((o) => o.rationibus).forEach(propters.addAll);
+        removePropterStagnum(propters.map((p) => p.interiore.publicaClavis).toList());
+        
         print('savedforsure');
         // for (Socket td in lsn) {
         //   td.destroy();
@@ -1932,6 +1922,8 @@ class ParAdRimor {
       Obstructionum obstructionum) async {
         print('howmanytimedoyouenterandvalidate');
     Obstructionum incipio = await Obstructionum.accipereIncipio(directorium);
+    print('timeforobstructionum');
+    print(json.encode(obstructionum.toJson()));
     if (obstructionum.interiore.priorProbationem != lo.last.probationem) {
       Print.nota(nuntius: 'probationem congruit prior probationem', message: 'proof did not match previous proof');
       return false;
@@ -1939,6 +1931,22 @@ class ParAdRimor {
     if (!await Pera.isPublicaClavisDefended(obstructionum.interiore.producentis, lo)) {
       Print.nota(nuntius: 'nuntius', message: 'Producentis key must be defended');
       return false;
+    }
+    if (obstructionum.interiore.generare != Generare.expressi) {
+          if (!obstructionum.probationem.startsWith('0' * obstructionum.interiore.obstructionumDifficultas)) {
+          Print.nota(nuntius: 'nuntius', message: 'corrupt obstructionumDifficultas');
+          return false;
+        }
+    } else {
+      int zeros = (obstructionum.interiore.obstructionumDifficultas / 2).floor();
+      if (!obstructionum.probationem.startsWith('0' * zeros) && !obstructionum.probationem.endsWith('0' * zeros)) {
+        Print.nota(nuntius: 'nuntius', message: 'corrupt obstructionumDifficultas');
+        return false;
+      }
+    }
+
+    if (!await obstructionum.validateDivisia(lo)) {
+      Print.nota(nuntius: 'nuntius', message: 'corrupt divisia');
     }
     if (!obstructionum.isProbationem()) {
       Print.nota(
@@ -1957,7 +1965,7 @@ class ParAdRimor {
       Print.nota(nuntius: 'nuntius', message: 'duplicate tx found');
       return false;
     }
-    if (!obstructionum.transactionsIncluduntur(lo)) {
+    if (!obstructionum.transactionsIncluduntur(lo, obstructionum)) {
       Print.nota(nuntius: 'refered gestum obstructionum non est inventus', message: 'refered transaction of block is not found');
       Print.obstructionumReprobatus();
       return false;
@@ -1970,9 +1978,26 @@ class ParAdRimor {
       Print.obstructionumReprobatus();
       return false;
     }
+    for (Transactio t in obstructionum.interiore.liberTransactions) {
+      if (!await t.inventum(lo, obstructionum)) {
+        Print.nota(nuntius: 'nuntius', message: 'input not found');
+        return false;
+      }
+    }
     if (!await convalidandumLiber(obstructionum.interiore.fixumTransactions, lo)) {
       Print.nota(nuntius: 'nuntius', message: 'invalid fixum tx');
       return false;
+    }
+    for (Transactio t in obstructionum.interiore.fixumTransactions) {
+      if (!await t.inventum(lo, obstructionum)) {
+        Print.nota(nuntius: 'nuntius', message: 'input not found');
+        return false;
+      }
+    }
+    for (Transactio t in obstructionum.interiore.expressiTransactions) {
+      if (!await t.inventum(lo, obstructionum)) {
+        return false;
+      }
     }
     if (obstructionum.badsewapons()) {
       Print.nota(nuntius: "nuntius", message: "valid ewapons");
@@ -2330,6 +2355,10 @@ class ParAdRimor {
             Print.nota(nuntius: 'iustam rem non ex pretio ratio', message: 'regular transaction can not come from a payment account');
             return false;
           } 
+          if (!lt.estDominus(llt, lo)) {
+            Print.nota(nuntius: 'est dopminus', message: 'could not verify signatures');
+            return false;
+          }
         }
         case TransactioSignificatio.ardeat:
         case TransactioSignificatio.perdita: {
@@ -2423,7 +2452,7 @@ class ParAdRimor {
     solucionisRationibus.removeWhere((rwsp) => ifo.solucionisRationibus.any((asp) => asp == rwsp.interioreSolucionisPropter.interioreInterioreSolucionisPropter.solucionis));
     fissileSolucionisRationibus.removeWhere((rwfsp) => ifo.fissileSolucionisRationibus.any((afsp) => afsp == rwfsp.interioreFissileSolucionisPropter.interioreInterioreFissileSolucionisPropter.solucionis));
     if ((prior.interiore.generare == Generare.efectus && novus.interiore.generare != Generare.efectus)) {
-      par!.expressiTransactions = [];
+      par!.expressiTransactions = Set();
     }
   }
 

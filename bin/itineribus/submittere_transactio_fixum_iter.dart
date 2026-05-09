@@ -50,6 +50,10 @@ Future<Response> submittereTransactioFixum(Request req) async {
           limit -= to.pod;
       }
     }
+    print(st.pod);
+    print(limit);
+    print(st.pod == limit);
+    print('over');
     if (st.pod > limit && !isProbationum) {
       return Response.badRequest(body: json.encode(BadRequest(code: 2, nuntius: 'non plus pecuniae tum modus $limit POD', message: 'can not spend more money then your limit of $limit POD')));
     }
@@ -68,7 +72,7 @@ Future<Response> submittereTransactioFixum(Request req) async {
         body: json.encode(BadRequest(code: 4, nuntius: 'mittens pecuniam penitus', message: 'sender of money is in depth').toJson())
       );
     }
-    List<Transactio> stagnum = par!.fixumTransactions;
+    List<Transactio> stagnum = par!.fixumTransactions.toList();
     // stagnum.addAll(par!.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!)));
     // print('stagnumotherloctobeprinted\n ${par!.liberTransactions.map((e) => e.toJson())}');
     if (isp) {

@@ -97,7 +97,7 @@ Future<Response> solucionisCashEx(Request req) async {
   List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
   SolucionisPropter sp = SolucionisPropter.accipere(publica, lo);
   BigInt mittere = await Pera.statera(sce.liber, publica, lo);
-  InterioreTransactio it = await Pera.novamRem(necessitudo: false, liber: sce.liber, twice: false, ts: TransactioSignificatio.solucionis, ex: sce.ex, value: mittere, to: sp.interioreSolucionisPropter.interioreInterioreSolucionisPropter.accipientis, transactioStagnum: sce.liber ? par!.liberTransactions : par!.fixumTransactions, lo: lo);
+  InterioreTransactio it = await Pera.novamRem(necessitudo: false, liber: sce.liber, twice: false, ts: TransactioSignificatio.solucionis, ex: sce.ex, value: mittere, to: sp.interioreSolucionisPropter.interioreInterioreSolucionisPropter.accipientis, transactioStagnum: sce.liber ? par!.liberTransactions.toList() : par!.fixumTransactions.toList(), lo: lo);
   ReceivePort rp = ReceivePort();
   if (sce.liber) {
     isolates.liberTxIsolates[it.identitatis] = await Isolate.spawn(Transactio.quaestum, List<dynamic>.from([it, rp.sendPort]));

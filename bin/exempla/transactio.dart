@@ -343,6 +343,34 @@ class Transactio {
     }
     return true;
   }
+  Future<bool> inventum(List<Obstructionum> lo, Obstructionum o) async {
+      Iterable<Obstructionum> io = [...lo, o];
+      List<Transactio> lt = [];
+      io.map((e) => interiore.liber ? e.interiore.liberTransactions : e.interiore.fixumTransactions).forEach(lt.addAll);
+      io.map((e) => e.interiore.expressiTransactions).forEach(lt.addAll); 
+      int successit = 0;
+      for (TransactioInput ti in interiore.inputs) {
+        bool found = false;
+        for (Transactio t in lt) {
+          if (t.interiore.transactioSignificatio != TransactioSignificatio.expressi && t.interiore.identitatis == ti.transactioIdentitatis) {
+            successit++;
+          } else if (t.interiore.transactioSignificatio == TransactioSignificatio.expressi && t.interiore.identitatis == ti.transactioIdentitatis && !found) {
+            found = true;
+            successit++;
+          }
+        }
+      }
+      print('lalatime');
+      print(successit);
+      print(interiore.inputs.length);
+      
+      return successit == interiore.inputs.length;
+  }
+  // Future<bool> inventumStagnum(List<Obstructionum> lo, List<Transactio> lt) {
+  //   List<Transactio> ltfb = [];
+  //   lo.map((o) => o.interiore.liberTransactions)
+
+  // }
   bool verumMoles(Iterable<Transactio> llt, List<Obstructionum> lo) {
     List<Transactio> lltc = List<Transactio>.from(llt.map((mlt) => Transactio.fromJson(mlt.toJson())));
     lo.map(

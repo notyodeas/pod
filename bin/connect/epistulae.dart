@@ -595,14 +595,14 @@ class DeclinareFurcaPervideasNuntius extends PervideasNuntius {
 }
 
 class RemovePropterStagnumPervideasNuntius extends PervideasNuntius {
-  RemovePropterStagnum rps;
-  RemovePropterStagnumPervideasNuntius(this.rps, String titulus, List<String> accepit): super(titulus, accepit);
+  List<String> publicas;
+  RemovePropterStagnumPervideasNuntius(this.publicas, String titulus, List<String> accepit): super(titulus, accepit);
   RemovePropterStagnumPervideasNuntius.ex(Map<String, dynamic> nuntius): 
-  rps = RemovePropterStagnum.fromJson(nuntius[PervideasNuntiusCasibus.rps] as Map<String, dynamic>), super.ex(nuntius);
+  publicas = List<String>.from(nuntius['publicas']), super.ex(nuntius);
 
   @override
   Map<String, dynamic> indu() => {
-    PervideasNuntiusCasibus.rps: rps.toJson(),
+    'publicas': publicas,
     PervideasNuntiusCasibus.titulus: titulus,
     PervideasNuntiusCasibus.accepit: accepit
   };
