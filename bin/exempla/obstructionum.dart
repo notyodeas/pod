@@ -1275,27 +1275,16 @@ class Obstructionum {
   bool transactionsIncluduntur(List<Obstructionum> lo, Obstructionum o) {
     Iterable<Obstructionum> io = [...lo, o];
     if (!interiore.liberTransactions.every((lt) => TransactioSignificatio.values.contains(lt.interiore.transactioSignificatio))) return false;
-    print('one'); 
-    print(interiore.liberTransactions.map((e) => e.toJson()));
     if (interiore.generare == Generare.efectus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).length != 1) return false;
-    print('two');
     if (interiore.generare == Generare.confussus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
-    print('three');
     if (interiore.generare == Generare.expressi && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
-    print('four');
     if (!interiore.fixumTransactions.every((t) => TransactioSignificatio.values.contains(t.interiore.transactioSignificatio))) return false;
-    print('five');
     if (interiore.fixumTransactions.where((t) => t.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
-    print('six');
-    List<Transactio> llt = o.interiore.liberTransactions.where((lt) => lt.interiore.transactioSignificatio != TransactioSignificatio.praemium && lt.interiore.transactioSignificatio != TransactioSignificatio.transform).toList();
-  
+    List<Transactio> llt = o.interiore.liberTransactions.where((lt) => lt.interiore.transactioSignificatio != TransactioSignificatio.praemium && lt.interiore.transactioSignificatio != TransactioSignificatio.transform).toList();  
     if (!convalidandumTransactions(true, llt, io.toList())) return false;
-    print('seven');
     List<Transactio> lft = o.interiore.fixumTransactions.where((t) => t.interiore.transactioSignificatio != TransactioSignificatio.praemium && t.interiore.transactioSignificatio != TransactioSignificatio.transform).toList();
     if (!convalidandumTransactions(false, lft, io.toList())) return false;
-    print('eight');
     if (!convalidandumTransactions(true, interiore.expressiTransactions.toList(), io.toList())) return false;
-    print('nine');
     return true;
   }
 
