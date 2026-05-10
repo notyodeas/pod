@@ -381,7 +381,7 @@ class Obstructionum {
       lit: inritaTransactions,
       lo: lo
     );
-    if (await Pera.isPublicaClavisDefended(producentis, lo)) fp.llttbi.toList().insert(0, Transactio.nullam(InterioreTransactio.praemium(producentis, incipio.interiore.praemium!)));
+    if (await Pera.isPublicaClavisDefended(producentis, lo)) fp.llttbi.insert(0, Transactio.nullam(InterioreTransactio.praemium(producentis, incipio.interiore.praemium!)));
     for (SiRemotionem sr in fp.lsrtbi.where((wlsr) => wlsr.interiore.siRemotionemInput != null)) {
       sr.interiore.siRemotionemInput!.interioreTransactio = null;
     }
@@ -398,14 +398,14 @@ class Obstructionum {
     priorProbationem: prior.probationem,
     gladiator: Gladiator.nullam(InterioreGladiator.efectus(
         outputs: InterioreGladiator.egos(fp.lptbi.toList()))),
-    liberTransactions: fp.llttbi,
-    fixumTransactions: fp.lfttbi,
-    expressiTransactions: fp.lettbi,
-    connexaLiberExpressis: fp.lcletbi,
-    siRemotiones: fp.lsrtbi,
-    solucionisRationibus: fp.lsptbi,
-    fissileSolucionisRationibus: fp.lfsptbi,
-    inritaTransactions: fp.littbi,
+    liberTransactions: fp.llttbi.toSet(),
+    fixumTransactions: fp.lfttbi.toSet(),
+    expressiTransactions: fp.lettbi.toSet(),
+    connexaLiberExpressis: fp.lcletbi.toSet(),
+    siRemotiones: fp.lsrtbi.toSet(),
+    solucionisRationibus: fp.lsptbi.toSet(),
+    fissileSolucionisRationibus: fp.lfsptbi.toSet(),
+    inritaTransactions: fp.littbi.toSet(),
     prior: prior);
     Print.nota(nuntius: 'incepit effectus fossor', message: 'Started efectus miner');
     String probationem = '';
@@ -461,8 +461,8 @@ class Obstructionum {
     ltsr.addAll(siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!)));
         COE coe = await COE.computo(victimaPrimis: ip.victima.primis, inimicusPrimis: inimicusPrimis, maxime: 7630, ex: ip.ex, prior: prior, gladiatorVictima: gladiatorVictima, gladiatorInimicus: gladiatorInimicus, llt: ltsr, lo: lo);
     FossorPraecipuus fp = FossorPraecipuus.coe(
-      llttbi: coe.llt.toSet(), 
-      lfttbi: coe.lft.toSet()
+      llttbi: coe.llt, 
+      lfttbi: coe.lft
     );
 
     fp.accipere(
@@ -509,14 +509,14 @@ class Obstructionum {
       await InterioreGladiator.cegi(privatusClavis: ip.ex, inimicus: 
       GladiatorInputPar(primis, gladiatorIdentitatis), 
       victima: GladiatorInputPar(ip.victima.primis, ip.victima.identitatis), lo: lo))),
-      liberTransactions: fp.llttbi,
-      fixumTransactions: fp.lfttbi,
+      liberTransactions: fp.llttbi.toSet(),
+      fixumTransactions: fp.lfttbi.toSet(),
       expressiTransactions: Set(),
       connexaLiberExpressis: Set(),
-      siRemotiones: fp.lsrtbi,
-      solucionisRationibus: fp.lsptbi,
-      fissileSolucionisRationibus: fp.lfsptbi,
-      inritaTransactions: fp.littbi,
+      siRemotiones: fp.lsrtbi.toSet(),
+      solucionisRationibus: fp.lsptbi.toSet(),
+      fissileSolucionisRationibus: fp.lfsptbi.toSet(),
+      inritaTransactions: fp.littbi.toSet(),
       prior: prior);
     List<String> toCrack = scuta;
     SendPort mitte = args[21] as SendPort;
@@ -577,8 +577,8 @@ class Obstructionum {
       if (potest == true) lt.add(t);
     }
     FossorPraecipuus fp = FossorPraecipuus.coe(
-      llttbi: coe.llt.toSet(), 
-      lfttbi: coe.lft.toSet(), 
+      llttbi: coe.llt, 
+      lfttbi: coe.lft, 
     );
     fp.accipere(      
       efectus: false,
@@ -614,14 +614,14 @@ class Obstructionum {
       await InterioreGladiator.cegi(privatusClavis: ip.ex, 
       inimicus: GladiatorInputPar(primis, gladiatorIdentitatis), 
       victima: GladiatorInputPar(ip.victima.primis, ip.victima.identitatis), lo: lo))),
-      liberTransactions: fp.llttbi,
-      fixumTransactions: fp.lfttbi,
+      liberTransactions: fp.llttbi.toSet(),
+      fixumTransactions: fp.lfttbi.toSet(),
       expressiTransactions: Set(),
       connexaLiberExpressis: Set(),
-      siRemotiones: fp.lsrtbi,
-      solucionisRationibus: fp.lsptbi,
-      fissileSolucionisRationibus: fp.lfsptbi,
-      inritaTransactions: fp.littbi,
+      siRemotiones: fp.lsrtbi.toSet(),
+      solucionisRationibus: fp.lsptbi.toSet(),
+      fissileSolucionisRationibus: fp.lfsptbi.toSet(),
+      inritaTransactions: fp.littbi.toSet(),
       prior: prior);
     String probationem = '';
     Print.nota(nuntius: 'incepit expressi fossor', message: 'Started expressi miner');
@@ -1275,17 +1275,27 @@ class Obstructionum {
   bool transactionsIncluduntur(List<Obstructionum> lo, Obstructionum o) {
     Iterable<Obstructionum> io = [...lo, o];
     if (!interiore.liberTransactions.every((lt) => TransactioSignificatio.values.contains(lt.interiore.transactioSignificatio))) return false;
+    print('one'); 
+    print(interiore.liberTransactions.map((e) => e.toJson()));
     if (interiore.generare == Generare.efectus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).length != 1) return false;
+    print('two');
     if (interiore.generare == Generare.confussus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    print('three');
     if (interiore.generare == Generare.expressi && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    print('four');
     if (!interiore.fixumTransactions.every((t) => TransactioSignificatio.values.contains(t.interiore.transactioSignificatio))) return false;
+    print('five');
     if (interiore.fixumTransactions.where((t) => t.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    print('six');
     List<Transactio> llt = o.interiore.liberTransactions.where((lt) => lt.interiore.transactioSignificatio != TransactioSignificatio.praemium && lt.interiore.transactioSignificatio != TransactioSignificatio.transform).toList();
+  
     if (!convalidandumTransactions(true, llt, io.toList())) return false;
+    print('seven');
     List<Transactio> lft = o.interiore.fixumTransactions.where((t) => t.interiore.transactioSignificatio != TransactioSignificatio.praemium && t.interiore.transactioSignificatio != TransactioSignificatio.transform).toList();
     if (!convalidandumTransactions(false, lft, io.toList())) return false;
+    print('eight');
     if (!convalidandumTransactions(true, interiore.expressiTransactions.toList(), io.toList())) return false;
-    
+    print('nine');
     return true;
   }
 
