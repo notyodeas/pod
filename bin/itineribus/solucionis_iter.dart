@@ -138,7 +138,6 @@ Future<Response> solucionisSubmittereFissileSolocionisPropter(Request req) async
   ReceivePort rp = ReceivePort();
   isolates.fissileSolocionisRationem[publica] = await Isolate.spawn(FissileSolucionisPropter.quaestum, List<dynamic>.from([ifsr, rp.sendPort]));
   rp.listen((solucionis) { 
-    print('he! $solucionis');
     par!.syncFissileSolucionisPropter(solucionis as FissileSolucionisPropter);
   });
   return Response.ok(json.encode({

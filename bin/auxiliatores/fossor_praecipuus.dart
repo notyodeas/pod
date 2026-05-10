@@ -107,36 +107,36 @@ class COE {
 }
 
 class FossorPraecipuus {
-  List<Transactio> llttbui = [];
-  List<Transactio> llttbi = [];
-  List<String> llti = [];
-  List<ConnexaLiberExpressi> lcletbi = [];
-  List<String> lclei = [];
-  List<Transactio> lettbi = [];
-  List<String> leti = [];
-  List<Transactio> lfttbui = [];
-  List<Transactio> lfttbi = [];
-  List<String> lfti = [];
-  List<Propter> lptbit = [];
-  List<Propter> lptbi = [];
-  List<String> lpi = [];
-  List<SiRemotionem> lsrtbi = [];
-  List<String> lsrsoo = [];
-  List<String> lsrsoi = [];
-  List<String> lsriti = [];
-  List<SolucionisPropter> lsptbi = [];
-  List<String> lspi = [];
-  List<FissileSolucionisPropter> lfsptbi = [];
-  List<String> lfspi = [];
-  List<InritaTransactio> littbi = [];
-  List<String> liti = [];
+  Set<Transactio> llttbui = Set();
+  Set<Transactio> llttbi = Set();
+  Set<String> llti = Set();
+  Set<ConnexaLiberExpressi> lcletbi = Set();
+  Set<String> lclei = Set();
+  Set<Transactio> lettbi = Set();
+  Set<String> leti = Set();
+  Set<Transactio> lfttbui = Set();
+  Set<Transactio> lfttbi = Set();
+  Set<String> lfti = Set();
+  Set<Propter> lptbit = Set();
+  Set<Propter> lptbi = Set();
+  Set<String> lpi = Set();
+  Set<SiRemotionem> lsrtbi = Set();
+  Set<String> lsrsoo = Set();
+  Set<String> lsrsoi = Set();
+  Set<String> lsriti = Set();
+  Set<SolucionisPropter> lsptbi = Set();
+  Set<String> lspi = Set();
+  Set<FissileSolucionisPropter> lfsptbi = Set();
+  Set<String> lfspi = Set();
+  Set<InritaTransactio> littbi = Set();
+  Set<String> liti = Set();
 
   List<String> referreDebetIdentitatumLiber = [];
   List<String> referreDebetIdentitatumExpressi = [];
 
   FossorPraecipuus();
 
-  FossorPraecipuus.coe({ required this.llttbi, required this.lfttbi }): llti = llttbi.map((mlttbi) => mlttbi.interiore.identitatis).toList();
+  FossorPraecipuus.coe({ required this.llttbi, required this.lfttbi }): llti = llttbi.map((mlttbi) => mlttbi.interiore.identitatis).toSet();
   
   accipere({ 
     required bool efectus, 
@@ -199,8 +199,8 @@ class FossorPraecipuus {
         }
         llttbi.addAll(llttbui);
         // llttbi.addAll(llttba);
-        llttbi.insertAll(0, llttba);
-        llttbui = [];
+        llttbi.addAll(llttba);
+        llttbui = Set();
         if (efectus) {
           int tscle = lcletbi.length;
           List<String> llttbii = [];
@@ -239,7 +239,7 @@ class FossorPraecipuus {
         }
         lfttbi.addAll(lfttbui);
         lfttbi.addAll(lfttba);
-        lfttbui = [];
+        lfttbui = Set();
         istxs = false;
         istxs  = true;
         int tssr = lsrtbi.length;
@@ -250,11 +250,11 @@ class FossorPraecipuus {
         List<Transactio> lltrbsr = [];
         lsrtbi.where((wsr) => wsr.interiore.siRemotionemInput != null && wsr.interiore.siRemotionemInput!.interioreTransactio!.liber && !lsrsoi.contains(wsr.interiore.siRemotionemInput!.siRemotionemSignature) && lsriti.contains(wsr.interiore.siRemotionemInput!.interioreTransactio!.identitatis)).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!)).forEach(lltrbsr.add);
         lsriti.addAll(lltrbsr.map((mlltrbsr) => mlltrbsr.interiore.identitatis));
-        llttbi.insertAll(0, lltrbsr);
+        llttbi.addAll(lltrbsr);
         maxime -= lltrbsr.length;
         List<Transactio> lftrbsr = [];
         lsrtbi.where((wsr) => wsr.interiore.siRemotionemInput != null && !wsr.interiore.siRemotionemInput!.interioreTransactio!.liber && !lsrsoi.contains(wsr.interiore.siRemotionemInput!.siRemotionemSignature)).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!)).forEach(lftrbsr.add);
-        lfttbi.insertAll(0, lftrbsr);
+        lfttbi.addAll(lftrbsr);
         maxime -= lftrbsr.length;
         lsrsoi.addAll(lsrtbi.where((wlsrtbi) => wlsrtbi.interiore.siRemotionemInput != null && !lsrsoi.contains(wlsrtbi.interiore.siRemotionemInput!.siRemotionemSignature)).map((mlsrtbi) => mlsrtbi.interiore.siRemotionemInput!.siRemotionemSignature));
         
@@ -330,27 +330,27 @@ class FossorPraecipuus {
   }
 
   reset() {
-    llttbui = [];
-    llttbi = [];
-    llti = [];
-    lcletbi = [];
-    lclei = [];
-    lettbi = [];
-    leti = [];
-    lfttbui = [];
-    lfttbi = [];
-    lfti = [];
-    lptbi = [];
-    lpi = [];
-    lsrtbi = [];
-    lsrsoo = [];
-    lsrsoi = [];
-    lsptbi = [];
-    lspi = [];
-    lfsptbi = [];
-    lspi = [];
-    littbi = [];
-    liti = [];
+    llttbui = Set();
+    llttbi = Set();
+    llti = Set();
+    lcletbi = Set();
+    lclei = Set();
+    lettbi = Set();
+    leti = Set();
+    lfttbui = Set();
+    lfttbi = Set();
+    lfti = Set();
+    lptbi = Set();
+    lpi = Set();
+    lsrtbi = Set();
+    lsrsoo = Set();
+    lsrsoi = Set();
+    lsptbi = Set();
+    lspi = Set();
+    lfsptbi = Set();
+    lspi = Set();
+    littbi = Set();
+    liti = Set();
     referreDebetIdentitatumLiber = [];
     referreDebetIdentitatumExpressi = [];
   }

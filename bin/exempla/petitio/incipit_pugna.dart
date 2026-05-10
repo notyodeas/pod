@@ -3,6 +3,7 @@ import '../constantes.dart';
 class Victima {
   bool primis;
   String identitatis;
+  Victima(this.primis, this.identitatis); 
   Victima.fromJson(Map<String, dynamic> map)
       : primis = bool.parse(map[JSON.primis].toString()),
         identitatis = map[JSON.identitatis];

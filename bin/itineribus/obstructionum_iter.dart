@@ -42,7 +42,6 @@ Future<Response> obstructionumPerNumerus(Request req) async {
 Future<Response> obstructionumPrior(Request req) async {
   Directory directorium = Directory(
       '${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}').absolute;
-  print('found');
   Obstructionum o = await Obstructionum.acciperePrior(directorium);
   return Response.ok(json.encode(o.toJson()));
 }

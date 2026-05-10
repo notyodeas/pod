@@ -622,6 +622,7 @@ class RespondBasesPervideasNuntius extends PervideasNuntius {
 }
 
 
+
 // class SyncFurcaAccepitPervideasNuntius extends PervideasNuntius {
 //   Obstructionum obstructionum;
 //   SyncFurcaAccepitPervideasNuntius(this.obstructionum, String titulus, List<String> accepit): super(titulus, accepit);

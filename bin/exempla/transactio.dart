@@ -227,6 +227,7 @@ class Transactio {
       }
       zeros += 1;
       mitte.send(Transactio(probationem, interiore));
+      break;
     }
   }
   bool validateBlockreward(Obstructionum incipio) {
@@ -326,10 +327,7 @@ class Transactio {
 
   bool estDominus(Iterable<Transactio> llt, List<Obstructionum> lo) {
     List<Transactio> lltc = List<Transactio>.from(llt.map((mo) => Transactio.fromJson(mo.toJson())));
-    print('chekck');
     lo.map((mo) => interiore.liber ? mo.interiore.liberTransactions.where((wlt) => interiore.inputs.any((ai) => ai.transactioIdentitatis == wlt.interiore.identitatis)) : mo.interiore.fixumTransactions.where((wft) => interiore.inputs.any((ai) => ai.transactioIdentitatis ==  wft.interiore.identitatis))).forEach(lltc.addAll); 
-    print(lltc.map((e) => e.toJson()));
-    print('lltcshoudlhaveitbutdidnot \n ${json.encode(lltc.map((e) => e.toJson()).toList())}');
     
     return interiore.inputs.every((ei) => Utils.cognoscere(PublicKey.fromHex(Pera.curve(), interiore.dominus), Signature.fromASN1Hex(ei.signature), lltc.singleWhere((swlt) => swlt.interiore.identitatis == ei.transactioIdentitatis).interiore.outputs[ei.index]));
   }
@@ -360,9 +358,6 @@ class Transactio {
           }
         }
       }
-      print('lalatime');
-      print(successit);
-      print(interiore.inputs.length);
       
       return successit == interiore.inputs.length;
   }
@@ -386,7 +381,6 @@ class Transactio {
     for (TransactioInput ti in interiore.inputs) {
       Transactio? t = lltc.firstWhereOrNull((fwon) => fwon.interiore.identitatis == ti.transactioIdentitatis);
       if (t == null) {
-        print('verumtoldnull');
         return false;
       }
       licet += t.interiore.outputs[ti.index].pod;
@@ -395,7 +389,6 @@ class Transactio {
     for (TransactioOutput to in interiore.outputs) {
       impendio += to.pod;
     }
-    print('impendiowasntlicet $impendio and licet $licet');
     return impendio == licet;
   }
   bool solucionis(List<Obstructionum> lo) {
@@ -476,13 +469,10 @@ class Transactio {
     lsr.where((wsr) => !lsri.any((asri) => asri.siRemotionemSignature == wsr.interiore.signatureInterioreSiRemotionem) && wsr.interiore.siRemotionemOutput != null).map((msr) => msr.interiore.siRemotionemOutput!).forEach(lsro.add);
     List<TransactioOutput> lto = [];
     for (TransactioInput ti in interiore.inputs) {
-      print('imsearching for a tx with identitatis\n ${ti.transactioIdentitatis}');
-      print('and my index is\n ${ti.index}');
-      print('and the full json is ${ti.toJson()}');
+
       List<Transactio> lt = [];
         lo.where((wlo) => interiore.liber ? wlo.interiore.liberTransactions.any((alt) => alt.interiore.identitatis == ti.transactioIdentitatis) : wlo.interiore.fixumTransactions.any((aft) => aft.interiore.identitatis == ti.transactioIdentitatis)).map((mo) => interiore.liber ? mo.interiore.liberTransactions.singleWhere((wlt) => wlt.interiore.identitatis == ti.transactioIdentitatis) : mo.interiore.fixumTransactions.singleWhere((swft) => swft.interiore.identitatis == ti.transactioIdentitatis)).forEach(lt.add);
       for (Transactio t in lt) {
-        print('thetxweregoeswrong\\n ${t.toJson()}');
         lto.add(t.interiore.outputs[ti.index]);
       }
     }

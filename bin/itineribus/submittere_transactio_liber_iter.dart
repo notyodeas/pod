@@ -54,8 +54,6 @@ Future<Response> submittereTransactioLiber(Request req) async {
           limit -= to.pod;
       }
     }
-    print('isprobationem');
-    print(isProbationum);
     if (st.pod > limit && !isProbationum) {
       return Response.badRequest(body: json.encode(BadRequest(code: 2, nuntius: 'non plus pecuniae tum modus $limit POD', message: 'can not spend more money then your limit of $limit POD', falses: "not coulds yes epsnd lesses frees not thans ises ilmits not ofs $limit not POD")));
     }
@@ -98,7 +96,6 @@ Future<Response> submittereTransactioLiber(Request req) async {
               true, liber.interiore.identitatis)
           .toJson()));
     } else {
-      print('okeytimeforregular');
       final Transactio liber = Transactio.nullam(await Pera.novamRem(
           necessitudo: true,
           liber: true,
@@ -115,7 +112,6 @@ Future<Response> submittereTransactioLiber(Request req) async {
         Transactio? frt = mlt.singleWhereOrNull((swonlt) =>  liber.interiore.inputs.any((ainputs) => ainputs.transactioIdentitatis == swonlt.interiore.identitatis));
         List<String> ettri = [];
         while (frt != null) {
-          print('ilooploop');
           ConnexaLiberExpressi? cle = par!.connexiaLiberExpressis.singleWhereOrNull((swc) => swc.interioreConnexaLiberExpressi.identitatis == frt!.interiore.identitatis);
           if (cle != null) {
             await par!.removeConnexaLiberExpressis([cle.interioreConnexaLiberExpressi.identitatis]);

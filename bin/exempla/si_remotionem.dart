@@ -189,7 +189,6 @@ class InterioreSiRemotionem {
         siRemotionemOutput!)) {
           return true;
         } else {
-          print('siremotionemcheckwascognoscereoutput');
           return false;
         }
   }
@@ -199,7 +198,7 @@ class InterioreSiRemotionem {
   //   if (lsr.any((alsr) => alsr.interiore.))
   // }
 
-  bool utPrimum(List<Transactio> lt) {
+  bool utPrimum(Set<Transactio> lt) {
     return lt.any((alt) => alt.interiore.identitatis == siRemotionemOutput!.transactioIdentitatis);
   }
 }
@@ -228,7 +227,6 @@ class SiRemotionem {
         HEX.encode(sha512
             .convert(utf8.encode(json.encode(interiore.toJson())))
             .bytes)) {
-              print('siremotionemcheckwasprobationem');
       return false;
     }
     return true;
@@ -255,7 +253,6 @@ class SiRemotionem {
     if (!ltlt.any((alt) =>
         alt.interiore.identitatis ==
         interiore.siRemotionemOutput?.transactioIdentitatis)) {
-      print('f');
       return false;
     }
     List<Transactio> ltft = [];
@@ -265,7 +262,6 @@ class SiRemotionem {
     if (ltft.any((alt) =>
         alt.interiore.identitatis ==
         interiore.siRemotionemOutput?.transactioIdentitatis)) {
-      print('ff');
       return false;
     }
     if (!udplicates(lo)) {
@@ -290,7 +286,6 @@ class SiRemotionem {
     List<String> inputIdentitatum = [];
     lsri.map((sri) => sri.siRemotionemSignature).forEach(inputIdentitatum.add);
     if (inputIdentitatum.contains(interiore.signatureInterioreSiRemotionem)) {
-      print('siremoptionemcheck nonhabetinit');
       return false;
     } 
     return true;
@@ -311,7 +306,6 @@ class SiRemotionem {
     List<SiRemotionem> lsrr = [];
     lo.map((mlo) => mlo.interiore.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null)).forEach(lsrr.addAll);
     lsr.removeWhere((rwlsr) => lsrr.any((alsrr) => alsrr.interiore.siRemotionemInput?.siRemotionemSignature == rwlsr.interiore.signatureInterioreSiRemotionem));
-    print('lsrtmp \n ${lsr.map((e) => e.toJson())}');
     return lsr.where((wlsr) => debita ? wlsr.interiore.siRemotionemOutput!.debetur == publica : wlsr.interiore.siRemotionemOutput!.habereIus == publica);
   }  
   static bool habetProfundum(bool liber, String publica, List<Obstructionum> lo) {
@@ -323,15 +317,12 @@ class SiRemotionem {
     return lsr.any((asr) => asr.interiore.siRemotionemOutput!.debetur == publica);
   }
   static SiRemotionem exInitus(String signature, List<Obstructionum> lo) {
-    print(' \n tell me signature \ n');
-    print(signature);
+    
     List<SiRemotionem> lsr = [];
     lo.map((mo) => mo.interiore.siRemotiones).forEach(lsr.addAll);
     return lsr.firstWhere((wsr) => (wsr.interiore.signatureInterioreSiRemotionem == signature && wsr.interiore.siRemotionemOutput != null) || (wsr.interiore.siRemotionemInput != null && wsr.interiore.siRemotionemInput!.siRemotionemSignature == signature));
   }
   static SiRemotionem novissimeExInitus(String signature, List<Obstructionum> lo) {
-    print(' \n tell me signature \ n');
-    print(signature);
     List<SiRemotionem> lsr = [];
     lo.map((mo) => mo.interiore.siRemotiones).forEach(lsr.addAll);
     return lsr.lastWhere((wsr) => (wsr.interiore.signatureInterioreSiRemotionem == signature && wsr.interiore.siRemotionemOutput != null) || (wsr.interiore.siRemotionemInput != null && wsr.interiore.siRemotionemInput!.siRemotionemSignature == signature));

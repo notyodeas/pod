@@ -56,7 +56,7 @@ class QueueItem  {
 
 enum Sync {
   novus,
-  pergo
+  pergo,
 }
 class ParAdRimor {
   bool isSalvare = false;
@@ -90,10 +90,7 @@ class ParAdRimor {
 
   List<QueueItem> epistulae = [];
   bool occupatus = false;
-  ParAdRimor(this.maxPares, this.ip, this.directorium) {
-    // print('print chosen ip $ip');
-    // print(directorium.path);
-  }
+  ParAdRimor(this.maxPares, this.ip, this.directorium);
 
   audite() async {
     List<String> sip = ip.split(':');
@@ -173,7 +170,6 @@ class ParAdRimor {
             PetitioObstructionumIncipioPervideasNuntius poipn =
               PetitioObstructionumIncipioPervideasNuntius.ex(
                   json.decode(msg) as Map<String, dynamic>);
-            print('directorium was wrong but whyy ${directorium.path}');
             List<Obstructionum> obss = await Obstructionum.getBlocks(directorium);
             if (!poipn.accepit.contains(ip)) {
               poipn.accepit.add(ip);
@@ -337,7 +333,6 @@ class ParAdRimor {
               FixumTransactioPervideasNuntius.ex(
                   json.decode(msg) as Map<String, dynamic>);
             List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
-            print('fixumlength ${fixumTransactions.length}');
               if (fixumTransactions.any((aft) =>
                   aft.interiore.identitatis ==
                   ftpn.transactio.interiore.identitatis)) {
@@ -747,9 +742,7 @@ class ParAdRimor {
             List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
             List<Obstructionum> foramenFurca = await Obstructionum.getExitusBlocks();
             List<Obstructionum> tridentes = await Obstructionum.getLatusBlocks();
-            print('probationems');
-            print(opn.obstructionum.interiore.priorProbationem);
-            print(prioro.probationem);
+            
             if (opn.obstructionum.interiore.priorProbationem !=
                 prioro.probationem) {
               if (!lo.map((mo) => mo.probationem).contains(opn
@@ -771,7 +764,7 @@ class ParAdRimor {
                     ffi.interiore.priorProbationem);
                 lo.add(ffi);
                 if (await validateObstructionum(
-                    clientis, lo, opn.obstructionum)) {
+                    lo, opn.obstructionum)) {
                   reprehendoSummaScandalumNumero(opn.obstructionum);
                   
                   if (opn.obstructionum.interiore.divisa <
@@ -836,7 +829,7 @@ class ParAdRimor {
                   lov.add(foramen);
                   lov.addAll(lof.reversed);
                   if (!await validateObstructionum(
-                      clientis, lov, opn.obstructionum)) {
+                      lov, opn.obstructionum)) {
                     break;
                   }
                   reprehendoSummaScandalumNumero(opn.obstructionum);
@@ -847,13 +840,6 @@ class ParAdRimor {
                           prioro.interiore
                               .summaObstructionumDifficultas) {
                     await Obstructionum.removereUsqueAd(foramen, directorium);
-                    List<Obstructionum> tlo =
-                        await Obstructionum.getBlocks(directorium);
-                    for (Obstructionum o in tlo) {
-                      print('${o.toJson()}\n');
-                      print('\n');
-                    }
-                    // await Obstructionum.removereExitus(foramen, directorium);
                     await foramen.salvare(directorium);
                     for (Obstructionum o in lof.reversed) {
                       await o.salvare(directorium);
@@ -887,7 +873,7 @@ class ParAdRimor {
                       .map((mo) => mo.probationem)
                       .contains(opn.obstructionum.probationem) &&
                   !opn.obstructionum.interiore.estFurca) {
-                    print('gotinunused');
+                    
                     List<Obstructionum> loc = lo
                         .takeWhile((two) =>
                             two.interiore.priorProbationem !=
@@ -895,22 +881,19 @@ class ParAdRimor {
                         .toList();
                     loc.removeLast();
                     // Obstructionum o = loc.removeLast();
-                    print(loc.map((e) => e.toJson()));
                     if (await validateObstructionum(
-                        clientis, loc, opn.obstructionum)) {
+                        loc, opn.obstructionum)) {
                         clientis.write('${json.encode(ObstructionumSalvarePervideasNuntius(
                               opn.obstructionum,
                               PervideasNuntiusTitulus.obstructionumIsSalvare,
                               opn.accepit)
                           .indu())}\x00');
-                      print('wewrotebacktosaveto ${clientis.address}:${clientis.port}');
                       clientis.destroy();
                     }
                     break;
               } else if (lo.map((mo) => mo.probationem).contains(opn
                       .obstructionum.interiore.priorProbationem) &&
                   !opn.obstructionum.interiore.estFurca) {
-                    print('nooigothere');
                 List<Obstructionum> lov = [];
                 lov.addAll(lo.takeWhile((two) =>
                     two.probationem !=
@@ -920,7 +903,7 @@ class ParAdRimor {
                     opn.obstructionum.interiore.priorProbationem));
                     //besides shouldnt we only validate the divisa instead of both divisa and summa difficulates
                 if (await validateObstructionum(
-                    clientis, lov, opn.obstructionum)) {
+                    lov, opn.obstructionum)) {
                   if (opn.obstructionum.interiore.divisa <
                           prioro.interiore.divisa &&
                       opn.obstructionum.interiore
@@ -967,7 +950,7 @@ class ParAdRimor {
                     swo.interiore.priorProbationem));
 
                 if (!await validateObstructionum(
-                    clientis, loc, opn.obstructionum)) {
+                    loc, opn.obstructionum)) {
                   break;
                 }
                 reprehendoSummaScandalumNumero(opn.obstructionum);
@@ -1004,12 +987,9 @@ class ParAdRimor {
 
             } else {
               
-              print('butmabyyoudid');
-              print('howaboiutyouraccepit \n ${opn.accepit}');
-              if (!await validateObstructionum(clientis, lo, opn.obstructionum)) {
+              if (!await validateObstructionum(lo, opn.obstructionum)) {
                 break;
               }
-              print('gotherelikealltheothers');
               clientis.write('${json.encode(ObstructionumSalvarePervideasNuntius(
                       opn.obstructionum,
                       PervideasNuntiusTitulus.obstructionumIsSalvare,
@@ -1033,6 +1013,7 @@ class ParAdRimor {
               isSalvare = true;
               await opn.obstructionum.salvare(directorium);               
               isSalvare = false;
+              Print.nota(nuntius: "nuntius", message: "received new bock with number ${opn.obstructionum.interiore.obstructionumNumerus} ");
 
               // List<String> lbu = bases.where((wb) => wb != ip && !opn.accepit.contains(wb)).toList();
               // print('soweirdlbu $lbu');
@@ -1190,7 +1171,6 @@ class ParAdRimor {
             PervideasNuntiusTitulus.petitioObstructionumIncipio, [ip]).indu())}\x00');
         List<int> buffer = [];
         nervus.listen((eventus) async {
-          print('respondedtonervuslisten');
           buffer.addAll(eventus);
           while (buffer.contains(0)) {
             int index = buffer.indexOf(0);
@@ -1204,16 +1184,22 @@ class ParAdRimor {
                 ObstructionumReponereUnaPervideasNuntius.ex(
                     json.decode(d)
                         as Map<String, dynamic>);
+            
             if (orupn.obstructionum.interiore.generare ==
                 Generare.incipio) {
-              print('nowiwillsalvare');
               await orupn.obstructionum.salvareIncipio(directorium);
+              Print.nota(nuntius: "incipio synchronizatus", message: 'synced incipio block');
               nervus.write('${json.encode(PetitioObstructionumPervideasNuntius(
                   orupn.obstructionum.probationem,
                   PervideasNuntiusTitulus.petitioObstructionum, []).indu())}\x00');
             } else {
-              print('nowiwillsalvare');
+              List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
+              if (!await validateObstructionum(lo, orupn.obstructionum)) {
+                Print.nota(nuntius: 'nuntius', message: 'synced corrupt block stopped syncing');
+                return;
+              }
               await orupn.obstructionum.salvare(directorium);
+              Print.nota(nuntius: 'numerus segmenti synchronizati ${orupn.obstructionum.interiore.obstructionumNumerus}', message: 'synced block number ${orupn.obstructionum.interiore.obstructionumNumerus}');
               nervus.write('${json.encode(PetitioObstructionumPervideasNuntius(
                   orupn.obstructionum.probationem,
                   PervideasNuntiusTitulus.petitioObstructionum, []).indu())}\x00');
@@ -1268,20 +1254,35 @@ class ParAdRimor {
               ObstructionumReponereUnaPervideasNuntius.ex(
                   json.decode(d)
                       as Map<String, dynamic>);
-              print('nowiwillsalvare');
+              List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
+              if (!await validateObstructionum(lo, orupn.obstructionum)) {
+                Print.nota(nuntius: 'nuntius', message: 'corrupt block in sync stopped syncing');
+                return;
+              }
               isSalvare = true;
               await orupn.obstructionum.salvare(directorium);
               isSalvare = false;
+              Print.nota(nuntius: 'numerus segmenti synchronizati ${orupn.obstructionum.interiore.obstructionumNumerus}', message: 'synced block number ${orupn.obstructionum.interiore.obstructionumNumerus}');
               nervus.write('${json.encode(PetitioObstructionumPervideasNuntius(
                   orupn.obstructionum.probationem,
                   PervideasNuntiusTitulus.petitioObstructionum, []).indu())}\x00');
+                  List<int> b = [];
+              nervus.listen((eventus) {
+                    b.addAll(eventus);
+              while (b.contains(0)) {
+                int index = b.indexOf(0);
+                List<int> msgBytes = b.sublist(0, index);
+                buffer = buffer.sublist(index + 1);
+                String d = utf8.decode(msgBytes);
+              }
+              });
             }
           }
-
           }
         });
         break;
       }
+
     }
   }
   Future filterOnline() async {
@@ -1333,7 +1334,6 @@ class ParAdRimor {
     List<String> conatus = [];
       List<String> acceptum = bases.where((wbases) => !conatus.contains(wbases)).toList();
       
-        print('yesisended');
         String nervuss = acceptum[random.nextInt(acceptum.length)];
         conatus.add(nervuss);
         Socket nervus = await Socket.connect(
@@ -1540,7 +1540,6 @@ class ParAdRimor {
           }
           case PervideasNuntiusTitulus.declinareFurca: {
             DeclinareFurcaPervideasNuntius dfpn = DeclinareFurcaPervideasNuntius.ex(json.decode(msg) as Map<String, dynamic>);
-            print(dfpn.indu());
             conatus.add(nervuss);
             extra.addAll(dfpn.lymphaticorum);
             rp.sendPort.send(nervuss);
@@ -1566,7 +1565,6 @@ class ParAdRimor {
     rp.listen((message) async {
       List<String> basesEarumExtra = bases.where((wb) => !conatus.contains(wb)).toList();
       basesEarumExtra.addAll(extra.where((we) => !conatus.contains(we)));
-      print(basesEarumExtra);
       String nervuss = basesEarumExtra[random.nextInt(basesEarumExtra.length)];
       Socket nervus = await Socket.connect(
       nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
@@ -1583,17 +1581,11 @@ class ParAdRimor {
         switch (pn.titulus) {
           case PervideasNuntiusTitulus.obstructionumReponereUna: {
             ObstructionumReponereUnaPervideasNuntius orupn = ObstructionumReponereUnaPervideasNuntius.ex(json.decode(msg) as Map<String, dynamic>);
-            print(' \n nuntiusorupn \n');
-            print(orupn.obstructionum.toJson());
             if (orupn.remove == true) {
               await Obstructionum.removereAdProbationemObstructionum(orupn.obstructionum.interiore.priorProbationem, directorium);
             }
             Obstructionum prioro = await Obstructionum.acciperePrior(directorium);
-            print(' \n prior \n');
-            print(prioro.toJson());
             // Obstructionum prioro = await Obstructionum.acciperePrior(directorium);
-            print('prior');
-            print(prioro.toJson());
             if (orupn.obstructionum.interiore.priorProbationem == prioro.probationem) {
               isSalvare = true;
               await orupn.obstructionum.salvare(directorium);
@@ -1728,8 +1720,6 @@ class ParAdRimor {
   }
 
   Future removeSiRemotionem(SiRemotionemRemoveNuntius srrn) async {
-    print('\n i e \n');
-    print(srrn.toJson());
     if (siRemotiones.any((asr) => asr.interiore.signatureInterioreSiRemotionem == srrn.signatureIdentitatis)) {
           siRemotiones.removeWhere((rwsr) => rwsr.interiore.signatureInterioreSiRemotionem == srrn.signatureIdentitatis);
           await filterOnline();
@@ -1795,7 +1785,6 @@ class ParAdRimor {
               'sended block with number: ${o.interiore.obstructionumNumerus} across the network',
           nuntius:
               'misit obstructionum cum numero: ${o.interiore.obstructionumNumerus} per network');
-    print('chosenode $nervuss');
     List<int> buffer = [];
     nervus.listen((eventus) async {
       buffer.addAll(eventus);
@@ -1804,20 +1793,24 @@ class ParAdRimor {
         List<int> msgBytes = buffer.sublist(0, index);
         buffer = buffer.sublist(index + 1);
         String msg = utf8.decode(msgBytes);
-              print('passedallvalidations');
       PervideasNuntius pn = PervideasNuntius.ex(
           json.decode(msg)
               as Map<String, dynamic>);
       if (pn.titulus == PervideasNuntiusTitulus.obstructionumIsSalvare) {
-        print('wentintosalvare');
         ObstructionumSalvarePervideasNuntius oispn =
             ObstructionumSalvarePervideasNuntius.ex(
                 json.decode(msg)
                     as Map<String, dynamic>);
-        print('nowiwillsalvare');
+        List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
+        if (!await validateObstructionum(lo, oispn.obstructionum)) {
+          Print.nota(nuntius: 'nuntius', message: 'node send back a corrupt block');
+          return;
+        }
+
         isSalvare = true;          
         await oispn.obstructionum.salvare(directorium);
         isSalvare = false;
+        Print.nota(nuntius: '', message: 'saved block number ${oispn.obstructionum.interiore.obstructionumNumerus}');
         removerePropterNovumObstructionum(prior, oispn.obstructionum);  
         removeFixumTransactions(o.interiore.fixumTransactions.map((f) => f.interiore.identitatis).toList());
         removeLiberTransactions(o.interiore.liberTransactions.map((l) => l.interiore.identitatis).toList()); 
@@ -1827,7 +1820,6 @@ class ParAdRimor {
         o.interiore.gladiator.interiore.outputs.map((o) => o.rationibus).forEach(propters.addAll);
         removePropterStagnum(propters.map((p) => p.interiore.publicaClavis).toList());
         
-        print('savedforsure');
         // for (Socket td in lsn) {
         //   td.destroy();
         // }
@@ -1854,7 +1846,7 @@ class ParAdRimor {
             ObstructionumReponereUnaPervideasNuntius.ex(
                 json.decode(msg)
                     as Map<String, dynamic>);
-        print('nowiwillsalvare');
+        
         await orupn.obstructionum.salvare(directorium);
         nervus.write('${json.encode(PetitioObstructionumPervideasNuntius(
             orupn.obstructionum.probationem,
@@ -1918,12 +1910,9 @@ class ParAdRimor {
             (li) => li == cle.interioreConnexaLiberExpressi.identitatis));
   }
 
-  Future<bool> validateObstructionum(Socket clientis, List<Obstructionum> lo,
+  Future<bool> validateObstructionum(List<Obstructionum> lo,
       Obstructionum obstructionum) async {
-        print('howmanytimedoyouenterandvalidate');
     Obstructionum incipio = await Obstructionum.accipereIncipio(directorium);
-    print('timeforobstructionum');
-    print(json.encode(obstructionum.toJson()));
     if (obstructionum.interiore.priorProbationem != lo.last.probationem) {
       Print.nota(nuntius: 'probationem congruit prior probationem', message: 'proof did not match previous proof');
       return false;
@@ -1932,6 +1921,13 @@ class ParAdRimor {
       Print.nota(nuntius: 'nuntius', message: 'Producentis key must be defended');
       return false;
     }
+    if (obstructionum.interiore.generare == Generare.confussus || obstructionum.interiore.generare == Generare.expressi) {
+      if (!await obstructionum.armaHabet(lo)) {
+        Print.nota(nuntius: 'nuntius', message: 'probationem does not contain required defences');
+         return false;
+      }
+    }
+
     if (obstructionum.interiore.generare != Generare.expressi) {
           if (!obstructionum.probationem.startsWith('0' * obstructionum.interiore.obstructionumDifficultas)) {
           Print.nota(nuntius: 'nuntius', message: 'corrupt obstructionumDifficultas');
@@ -2034,7 +2030,7 @@ class ParAdRimor {
         Print.obstructionumReprobatus();
         return false;
       }
-      List<Transactio> all = obstructionum.interiore.liberTransactions;
+      Set<Transactio> all = obstructionum.interiore.liberTransactions;
       all.addAll(obstructionum.interiore.fixumTransactions);
       all.addAll(liberTransactions);
       all.addAll(fixumTransactions);
@@ -2280,10 +2276,8 @@ class ParAdRimor {
           //     opn.accepit));
         }
       case QuidFacere.corrupt:
-        print('indeednocommunt');
         return false;
       default:
-        print('echtwaar');
         return false;
     }
 
@@ -2363,27 +2357,23 @@ class ParAdRimor {
         case TransactioSignificatio.ardeat:
         case TransactioSignificatio.perdita: {
           if (!lt.estDominus(llt, lo) || lt.isFurantur() || !lt.verumMoles(llt, lo) || !lt.validateProbationem()) {
-            print('bailedliberconv');
             return false;
           }
           break;
         }
         case TransactioSignificatio.solucionis:  
           if (!lt.convalidandumSolucionis(lo)) {
-            print('solucioniserr');
             return false;
           } 
           continue sol;
         case TransactioSignificatio.fissile: {
           if (!lt.convalidandumSolucionisFissile(lo)) {
-            print('fissileerr');
             return false;
           }
           continue sol;
         }
         case TransactioSignificatio.reliquiae: {
          if (!lt.convalidandumSolucionisReliquiae(lo)) {
-            print('reliquiaeeerr');
             return false;
          } 
          continue sol;
@@ -2405,11 +2395,10 @@ class ParAdRimor {
         sol:
         default: {
           if (!lt.verumMoles(llt, lo)) {
-            print('upferum');
             return false;
           }
           for (TransactioOutput to in lt.interiore.outputs) {
-            if (!await Pera.isPublicaClavisDefended(to.publicaClavis, lo)) {
+            if (!await Pera.isPublicaClavisDefended(to.publicaClavis, lo) && lt.interiore.liber) {
               Print.nota(nuntius: 'non potest mittere pecuniam publicam clavem indefensam', message: 'can not send money to undefended public key');
               return false;
             }

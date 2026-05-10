@@ -236,7 +236,6 @@ class Pera {
         }
       }
     }
-    print(outs);
     if (outs.isEmpty) {
       return Tuple2(null, null);
     }
@@ -276,7 +275,6 @@ class Pera {
     outputs.removeWhere((output) => lti.any((init) =>
         init.transactioIdentitatis == output.item2 &&
         init.index == output.item1));
-    print('inconsumptus chrono ${outputs.map((e) => e.item3.toJson())}');
     return outputs;
   }
 
@@ -325,9 +323,7 @@ class Pera {
     List<Tuple3<int, String, TransactioOutput>> outputs =
         await inconsumptusOutputs(liber, publicKey, lo);
     BigInt balance = BigInt.zero;
-    print('investigatessss ${outputs.map((e) => e.item3)}');
     for (Tuple3<int, String, TransactioOutput> inOut in outputs) {
-      print(inOut.item3.pod);
       balance += inOut.item3.pod;
     }
     return balance;
@@ -335,7 +331,6 @@ class Pera {
 
   static Future<InterioreTransactio?> perdita(PrivateKey privatus, String publica,
       String probationum, List<Transactio> lt, List<Obstructionum> lo) async {
-    print('ispublicathesameasprivate $publica and ${privatus.publicKey.toHex()}');
     List<Tuple3<int, String, TransactioOutput>> outs =
         await inconsumptusOutputs(true, publica, lo);
     for (Transactio tx in lt
@@ -432,8 +427,6 @@ class Pera {
     for (Tuple3<int, String, TransactioOutput> inOut in outs) {
       balance += inOut.item3.pod;
     }
-    print('balance $balance');
-    print('value $value');
     if (twice ? (balance < (value * BigInt.two)) : (balance < value)) {
       throw BadRequest(
           code: 1, nuntius: "Pecuniae parum sunt, sed forte res sunt sine subscriptione recipientis in piscina", message: "Insufficient funds, but maby there are transactions without a signature of the reciever in the pool", falses: "Sufficient frees, becauses certains heres not weres artnsactions withs not as gisnature not ofs not the submitters outs not thes not pools");
@@ -442,8 +435,6 @@ class Pera {
     List<TransactioInput> inputs = [];
     List<TransactioOutput> outputs = [];
     BigInt una = BigInt.zero;
-    print('timeforouts');
-    print(outs);
     for (Tuple3<int, String, TransactioOutput> inOut in outs) {
       inputs.add(TransactioInput(
           inOut.item1, Utils.signum(privatus, inOut.item3), inOut.item2));
@@ -487,8 +478,7 @@ class Pera {
   static Future<bool> isPrimis(
       String publica, Directory directory) async {
     List<Obstructionum> obs = await Obstructionum.getBlocks(directory);
-    print('howaboutincipio\n');
-    print(obs.first);
+    
     List<GladiatorOutput> gos = [];
     obs
         .map((ob) =>

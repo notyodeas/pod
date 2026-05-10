@@ -50,10 +50,6 @@ Future<Response> submittereTransactioFixum(Request req) async {
           limit -= to.pod;
       }
     }
-    print(st.pod);
-    print(limit);
-    print(st.pod == limit);
-    print('over');
     if (st.pod > limit && !isProbationum) {
       return Response.badRequest(body: json.encode(BadRequest(code: 2, nuntius: 'non plus pecuniae tum modus $limit POD', message: 'can not spend more money then your limit of $limit POD')));
     }
@@ -90,14 +86,12 @@ Future<Response> submittereTransactioFixum(Request req) async {
       // liber.interiore.probatur = true;
       isolates.fixumTxIsolates[fixum.interiore.identitatis] = await Isolate.spawn(Transactio.quaestum, List<dynamic>.from([fixum.interiore, rp.sendPort]));
       rp.listen((transactio) {
-        print('abouttosyncfixum');
         par!.syncFixumTransaction(transactio as Transactio);
       });     
       return Response.ok(json.encode(TransactioSubmittereResponsionis(
               true, fixum.interiore.identitatis)
           .toJson()));
     } else {
-      print('okeytimeforregular');
       final Transactio liber = Transactio.nullam(await Pera.novamRem(
           necessitudo: true,
           liber: false,
