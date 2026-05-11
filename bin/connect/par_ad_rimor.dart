@@ -95,7 +95,7 @@ class ParAdRimor {
   audite() async {
     List<String> sip = ip.split(':');
     ServerSocket serverNervum =
-        await ServerSocket.bind(sip[0], int.parse(sip[1]));
+        await ServerSocket.bind(InternetAddress.anyIPv4, int.parse(sip[1]));
     serverNervum.listen((clientis) {
       // clientis.setOption(SocketOption.tcpNoDelay, true);
       List<int> buffer = [];
