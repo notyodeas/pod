@@ -1766,6 +1766,7 @@ class ParAdRimor {
     stamina.efectusThreads.forEach((et) => et.kill(priority: Isolate.immediate));
     stamina.confussusThreads.forEach((ct) => ct.kill(priority: Isolate.immediate));
     stamina.expressiThreads.forEach((et) => et.kill(priority: Isolate.immediate));
+    stamina.interrumpereThreads.forEach((et) => et.kill(priority: Isolate.immediate));
     Obstructionum prior = await Obstructionum.acciperePrior(directorium);
     if (o.interiore.priorProbationem != prior.probationem) {
       Print.nota(nuntius: 'invalidum obstructionum ad sync abortivum', message: 'invalid block to sync aborting');
@@ -1776,7 +1777,7 @@ class ParAdRimor {
     await filterOnline();
     String nervuss = bases.where((wb) => wb != ip).toList()[random.nextInt(bases.where((wb) => wb != ip).length)];
     Socket nervus = await Socket.connect(
-          nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
+          nervuss.split(':')[0], int.parse(nervuss.split(':')[1]), timeout: Duration(seconds: 10));
     nervus.write('${json.encode(ObstructionumPervideasNuntius(
               o, PervideasNuntiusTitulus.accipreObstructionum, [ip])
           .indu())}\x00');
@@ -1801,6 +1802,7 @@ class ParAdRimor {
             ObstructionumSalvarePervideasNuntius.ex(
                 json.decode(msg)
                     as Map<String, dynamic>);
+        print('gotbackintoissalvare');
         List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
         if (!await validateObstructionum(lo, oispn.obstructionum)) {
           Print.nota(nuntius: 'nuntius', message: 'node send back a corrupt block');
@@ -1868,7 +1870,7 @@ class ParAdRimor {
       return;
     }
     String nervuss = acceptum[random.nextInt(acceptum.length)];
-    Socket nervus = await Socket.connect(nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
+    Socket nervus = await Socket.connect(nervuss.split(':')[0], int.parse(nervuss.split(':')[1]), timeout: Duration(seconds: 10));
     switch (tg) {
       case TransactioGenus.liber: {
         nervus.write(json.encode(TransactioPervideasNuntius(
@@ -1926,6 +1928,11 @@ class ParAdRimor {
         Print.nota(nuntius: 'nuntius', message: 'probationem does not contain required defences');
          return false;
       }
+    }
+    List<GladiatorOutput> lgo = await Obstructionum.utDifficultas(lo);
+    if (obstructionum.interiore.obstructionumDifficultas != lgo.length) {
+      Print.nota(nuntius: 'nuntius', message: 'difficulty must be the same as the amount of undefeaten gladiators');
+      return false;
     }
 
     if (obstructionum.interiore.generare != Generare.expressi) {
@@ -2002,8 +2009,8 @@ class ParAdRimor {
       return false;
     }
     List<Transactio> ltltet = [];
-    ltltet.addAll(liberTransactions);
-    ltltet.addAll(expressiTransactions);
+    ltltet.addAll(obstructionum.interiore.liberTransactions);
+    ltltet.addAll(obstructionum.interiore.expressiTransactions);
     if (!await convalidandumLiber(ltltet, lo)) {
       Print.nota(
             nuntius:
@@ -2089,11 +2096,43 @@ class ParAdRimor {
           return false;
         }
       case Generare.expressi: {
-        if (lo.last.interiore.generare != Generare.efectus) {
-          Print.nota(nuntius: 'an expressi scandalum fieri potest nisi super efectus scandalum', message: 'an expressi block can only occur on top of an efectus block');
-          Print.obstructionumReprobatus();
-          return false;
-        }
+        // if (lo.last.interiore.generare != Generare.efectus) {
+        //   Print.nota(nuntius: 'an expressi scandalum fieri potest nisi super efectus scandalum', message: 'an expressi block can only occur on top of an efectus block');
+        //   Print.obstructionumReprobatus();
+        //   return false;
+        // }
+        if (!await obstructionum.vicit(lo)) {
+            Print.nota(
+                nuntius: 'nullum signum gladiatorium pugnae',
+                message: 'invalid signature of gladiator battle');
+            Print.obstructionumReprobatus();
+            return false;
+          }
+        if (!await obstructionum.convalidandumTransform(lo)) {
+            Print.nota(
+                nuntius: 'licet transformatio liber ad fixum',
+                message: 'illegal transform of liber to fixum');
+            Print.obstructionumReprobatus();
+            return false;
+          }
+        if (!obstructionum.convalidandumExpressiMoles()) {
+            Print.nota(nuntius: 'nuntius', message: 'invalid expressi');
+            Print.obstructionumReprobatus();
+            return false;
+          }
+        if (await Obstructionum.gladiatorConfodiantur(
+              obstructionum.interiore.gladiator.interiore.input!.victima.primis,
+              obstructionum.interiore.gladiator.interiore
+                  .input!.victima.identitatis,
+              obstructionum.interiore.producentis,
+              lo)) {
+            Print.nota(
+                nuntius: 'clausus potest non oppugnare publica clavem',
+                message: 'block can not attack the same public key');
+            Print.obstructionumReprobatus();
+            return false;
+          }
+      
       }
       case Generare.confussus:
         {
@@ -2113,6 +2152,11 @@ class ParAdRimor {
             Print.nota(
                 nuntius: 'licet transformatio liber ad fixum',
                 message: 'illegal transform of liber to fixum');
+            Print.obstructionumReprobatus();
+            return false;
+          }
+          if (!obstructionum.convalidandumExpressiMoles()) {
+            Print.nota(nuntius: 'nuntius', message: 'invalid expressi');
             Print.obstructionumReprobatus();
             return false;
           }
@@ -2164,6 +2208,14 @@ class ParAdRimor {
             return false;
           }
         }
+      case Generare.interrumpere: {
+        if (!obstructionum.convalidandumExpressiMoles()) {
+          Print.nota(nuntius: 'nuntius', message: 'invalid expressi');
+          Print.obstructionumReprobatus();
+          return false;
+        }
+      }
+
       default:
         {
           Print.nota(

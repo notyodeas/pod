@@ -68,7 +68,7 @@ Future<Response> fossorExpressi(Request req) async {
         "message": "Gladiator already defeaten or not found with your private key"
       }));
     }
-    List<Transactio> lttip = [];
+    Set<Transactio> lttip = Set();
     lttip.addAll(par!.liberTransactions);
     Iterable<Transactio> ltsr = par!.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!));
     lttip.addAll(ltsr);

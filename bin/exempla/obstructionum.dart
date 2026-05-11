@@ -25,7 +25,7 @@ import '../server.dart';
 import 'package:encoder/encoder.dart';
 import 'package:encoder/encoder.dart';
 
-enum Generare { incipio, efectus, confussus, expressi }
+enum Generare { incipio, efectus, confussus, expressi, interrumpere }
 
 extension GenerareFromJson on Generare {
   static fromJson(String name) {
@@ -38,6 +38,8 @@ extension GenerareFromJson on Generare {
         return Generare.confussus;
       case 'expressi':
         return Generare.expressi;
+      case 'interrumpere':
+        return Generare.interrumpere;
     }
   }
 }
@@ -210,6 +212,35 @@ class InterioreObstructionum {
         nonce = BigInt.zero,
         defensio = [Utils.randomHex(2)],
         impetus = [Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2)];
+
+    InterioreObstructionum.interrumpere({
+      required this.estFurca,
+      required this.obstructionumDifficultas,
+      required this.summaObstructionumDifficultas,
+      required this.forumCap,
+      required this.liberForumCap,
+      required this.fixumForumCap,
+      required this.divisa,
+      required this.obstructionumNumerus,
+      required this.producentis,
+      required this.priorProbationem,
+      required this.gladiator,
+      required this.liberTransactions,
+      required this.fixumTransactions,
+      required this.expressiTransactions,
+      required this.connexaLiberExpressis,
+      required this.siRemotiones,
+      required this.solucionisRationibus,
+      required this.fissileSolucionisRationibus,
+      required this.inritaTransactions,
+      required Obstructionum prior
+    }) : generare = Generare.interrumpere,
+        indicatione = DateTime.now().microsecondsSinceEpoch,
+        nonce = BigInt.zero,
+        defensio = [Utils.randomHex(2)],
+        impetus = [Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2), Utils.randomHex(2)];
+        
+
 
   mine() {
     indicatione = DateTime.now().microsecondsSinceEpoch;
@@ -421,8 +452,6 @@ class Obstructionum {
   }
 
   static Future confussus(List<dynamic> args) async {
-    // InterioreObstructionum interioreObstructionum =
-    //     args[0] as InterioreObstructionum;
     bool estFurca = args[0];
     IncipitPugna ip = args[1];
     bool inimicusPrimis = args[2];
@@ -553,21 +582,21 @@ class Obstructionum {
     bool inimicusPrimis = args[8];
     Gladiator gladiatorVictima = args[9];
     Gladiator gladiatorInimicus = args[10];
-    List<Transactio> lttip = args[11];
-    List<Transactio> fixumTransactions = args[12];
-    List<Transactio> expressiTransactions = args[13];
-    List<ConnexaLiberExpressi> connexiaLiberExpressis = args[14];
-    List<SiRemotionem> siRemotiones = args[15];
+    Set<Transactio> lttip = args[11];
+    Set<Transactio> fixumTransactions = args[12];
+    Set<Transactio> expressiTransactions = args[13];
+    Set<ConnexaLiberExpressi> connexiaLiberExpressis = args[14];
+    Set<SiRemotionem> siRemotiones = args[15];
     List<Propter> rationibus = args[16];
-    List<SolucionisPropter> solucionisRationibus = args[17];
-    List<FissileSolucionisPropter> fissileSolucionisRationibus = args[18];
-    List<InritaTransactio> inritaTransactions = args[19];
+    Set<SolucionisPropter> solucionisRationibus = args[17];
+    Set<FissileSolucionisPropter> fissileSolucionisRationibus = args[18];
+    Set<InritaTransactio> inritaTransactions = args[19];
     List<Propter> lp = [];
     gladiatorInimicus.interiore.outputs.map((o) => o.rationibus).forEach(lp.addAll);
     lttip.addAll(prior.interiore.expressiTransactions.where((e) => lp.any((p) => p.interiore.publicaClavis == e.interiore.dominus || p.interiore.publicaClavis == e.interiore.recipiens)));
     
     COE coe = await COE.computo(victimaPrimis: ip.victima.primis, 
-    inimicusPrimis: inimicusPrimis, maxime: 7630 - prior.interiore.expressiTransactions.length, ex: ip.ex, prior: prior, gladiatorVictima: gladiatorVictima, gladiatorInimicus: gladiatorInimicus, llt: lttip, lo: lo);
+    inimicusPrimis: inimicusPrimis, maxime: 7630 - prior.interiore.expressiTransactions.length, ex: ip.ex, prior: prior, gladiatorVictima: gladiatorVictima, gladiatorInimicus: gladiatorInimicus, llt: lttip.toList(), lo: lo);
     List<Transactio> lt = [];
     for (Transactio t in lttip) {
       bool potest = true;
@@ -616,8 +645,8 @@ class Obstructionum {
       victima: GladiatorInputPar(ip.victima.primis, ip.victima.identitatis), lo: lo))),
       liberTransactions: fp.llttbi.toSet(),
       fixumTransactions: fp.lfttbi.toSet(),
-      expressiTransactions: Set(),
-      connexaLiberExpressis: Set(),
+      expressiTransactions: fp.lettbi.toSet(),
+      connexaLiberExpressis: fp.lcletbi.toSet(),
       siRemotiones: fp.lsrtbi.toSet(),
       solucionisRationibus: fp.lsptbi.toSet(),
       fissileSolucionisRationibus: fp.lfsptbi.toSet(),
@@ -644,7 +673,87 @@ class Obstructionum {
     }
     mitte.send(Obstructionum(interioreObstructionum, probationem));
   }
+  static Future interrumpere(List<dynamic> args) async {
+    bool estFurca = args[0];
+    List<int> on = args[1];
+    Obstructionum prior = args[2];
+    List<Obstructionum> lo = args[3];  
+    Set<Transactio> liberTransactions = args[4];
+    Set<Transactio> fixumTransactions = args[5];
+    Set<Transactio> expressiTransactions = args[6];
+    Set<ConnexaLiberExpressi> connexiaLiberExpressis = args[7];
+    Set<SiRemotionem> siRemotiones = args[8];
+    List<Propter> rationibus = args[9];
+    Set<SolucionisPropter> solucionisRationibus = args[10];
+    Set<FissileSolucionisPropter> fissileSolucionisRationibus = args[11];
+    Set<InritaTransactio> inritaTransactions = args[12];
+    String producentis = args[13];
+    SendPort mitte = args[14] as SendPort;
+    Print.nota(nuntius: "interrumpere fossor onerando", message: 'loading interrumpere miner');
+    final obstructionumDifficultas = await Obstructionum.utDifficultas(lo);
+    BigInt numerus = await Obstructionum.numeruo(on);
+    List<Transactio> lt = [];
+    for (Transactio t in liberTransactions) {
+      bool potest = true;
+      for (TransactioOutput to in t.interiore.outputs) {
+        if (!await Pera.isPublicaClavisDefended(to.publicaClavis, lo) && !await Pera.isProbationum(to.publicaClavis, lo))  potest = false;
+      }
+      if (potest == true) lt.add(t);
+    }
+    FossorPraecipuus fp = FossorPraecipuus();
+    fp.accipere(    
+      efectus: true, 
+      maxime: 7630, 
+      llt: lt.toSet(), 
+      lft: fixumTransactions, 
+      let: expressiTransactions, 
+      lcle: connexiaLiberExpressis, 
+      lsr: siRemotiones, 
+      lp: rationibus.toSet(), 
+      lsp: solucionisRationibus, 
+      lfsp: fissileSolucionisRationibus, 
+      lit: inritaTransactions,
+      lo: lo
+    );
+    print('herestheprob');
+    print(fp.lettbi.toSet().map((e) => e.toJson()));
+    for (SiRemotionem sr in fp.lsrtbi.where((wlsr) => wlsr.interiore.siRemotionemInput != null)) {
+      sr.interiore.siRemotionemInput!.interioreTransactio = null;
+    }
+    InterioreObstructionum interioreObstructionum = InterioreObstructionum.interrumpere(
+    estFurca: estFurca,
+    obstructionumDifficultas: obstructionumDifficultas.length,
+    divisa: numerus / await Obstructionum.utSummaDifficultas(lo),
+    forumCap: await Obstructionum.accipereForumCap(lo),
+    liberForumCap: await Obstructionum.accipereForumCapLiberFixum(true, lo),
+    fixumForumCap: await Obstructionum.accipereForumCapLiberFixum(false, lo),
+    summaObstructionumDifficultas: await Obstructionum.utSummaDifficultas(lo),
+    obstructionumNumerus: on,
+    producentis: producentis,
+    priorProbationem: prior.probationem,
+    gladiator: Gladiator.nullam(InterioreGladiator.interrumpere()),
+    liberTransactions: fp.llttbi.toSet(),
+    fixumTransactions: fp.lfttbi.toSet(),
+    expressiTransactions: fp.lettbi.toSet(),
+    connexaLiberExpressis: fp.lcletbi.toSet(),
+    siRemotiones: fp.lsrtbi.toSet(),
+    solucionisRationibus: fp.lsptbi.toSet(),
+    fissileSolucionisRationibus: fp.lfsptbi.toSet(),
+    inritaTransactions: fp.littbi.toSet(),
+    prior: prior);
+    Print.nota(nuntius: 'incepit interrumpere fossor', message: 'Started interrumpere miner');
+    String probationem = '';
+    do {
+      interioreObstructionum.mine();
+      probationem = HEX.encode(sha512
+          .convert(utf8.encode(json.encode(interioreObstructionum.toJson())))
+          .bytes);
+          stdout.write('\r $probationem');
+    } while (!probationem
+        .startsWith('0' * interioreObstructionum.obstructionumDifficultas));
+    mitte.send(Obstructionum(interioreObstructionum, probationem));
 
+  }
   Map<String, dynamic> toJson() => {
         JSON.interiore: interiore.toJson(),
         JSON.probationem: probationem
@@ -1276,8 +1385,17 @@ class Obstructionum {
     Iterable<Obstructionum> io = [...lo, o];
     if (!interiore.liberTransactions.every((lt) => TransactioSignificatio.values.contains(lt.interiore.transactioSignificatio))) return false;
     if (interiore.generare == Generare.efectus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).length != 1) return false;
+    if (interiore.generare == Generare.efectus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.transform).isNotEmpty) return false;
+    if (interiore.generare == Generare.efectus && interiore.fixumTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.transform).isNotEmpty) return false;
+    if (interiore.generare == Generare.efectus && interiore.expressiTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    if (interiore.generare == Generare.efectus && interiore.expressiTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.transform).isNotEmpty) return false;
     if (interiore.generare == Generare.confussus && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
     if (interiore.generare == Generare.expressi && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    if (interiore.generare == Generare.interrumpere && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    if (interiore.generare == Generare.interrumpere && interiore.liberTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.transform).isNotEmpty) return false;
+    if (interiore.generare == Generare.interrumpere && interiore.fixumTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.transform).isNotEmpty) return false;
+        if (interiore.generare == Generare.interrumpere && interiore.expressiTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
+    if (interiore.generare == Generare.interrumpere && interiore.expressiTransactions.where((x) => x.interiore.transactioSignificatio == TransactioSignificatio.transform).isNotEmpty) return false;
     if (!interiore.fixumTransactions.every((t) => TransactioSignificatio.values.contains(t.interiore.transactioSignificatio))) return false;
     if (interiore.fixumTransactions.where((t) => t.interiore.transactioSignificatio == TransactioSignificatio.praemium).isNotEmpty) return false;
     List<Transactio> llt = o.interiore.liberTransactions.where((lt) => lt.interiore.transactioSignificatio != TransactioSignificatio.praemium && lt.interiore.transactioSignificatio != TransactioSignificatio.transform).toList();  
@@ -1476,7 +1594,7 @@ class Obstructionum {
     return true;
   }
   bool longitudoTeliFundamentalis() {
-    // return true;
+    return true;
     if (interiore.gladiator.interiore.outputs[0].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[1].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[0].impetum.length != 4) return false;

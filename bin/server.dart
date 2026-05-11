@@ -29,6 +29,7 @@ import 'itineribus/fossor_expressi_iter.dart';
 import 'itineribus/gladiator_iter.dart';
 import 'itineribus/network_iter.dart';
 import 'itineribus/download_iter.dart';
+import 'itineribus/fossor_interrumpere_iter.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:shelf_plus/shelf_plus.dart';
 
@@ -59,6 +60,8 @@ final _router = Router().plus
   ..post('/fossor-expressi/<furca>', fossorExpressi)
   ..get('/fossor-expressi-threads', expressiThreads)
   ..delete('/prohibere-expressi-fossores', prohibereExpressi)
+  ..post('/fossor-interrumpere/<furca>', fossorInterrumpere)
+  ..delete('/prohibere-interrumpere-fossores', prohibereInterrumpere)
   ..post('/propter-submittere', propterSubmittere)
   // ..post('/propter-submittere-multi', propterSubmittereMulti)
   ..get('/propter-status/<publica-clavis>', propterStatus)
@@ -140,6 +143,7 @@ class Stamina {
   List<Isolate> efectusThreads = [];
   List<Isolate> confussusThreads = [];
   List<Isolate> expressiThreads = [];
+  List<Isolate> interrumpereThreads = [];
   Stamina();
 }
 
@@ -234,7 +238,7 @@ void main(List<String> args) async {
         message: 'Created Incipio block');
   }
   if (!syncNovus && directory.listSync().isEmpty && !erlaunches) {
-    Print.nota(nuntius: 'Quaeso addere novus vexillum ad imperium tuum lineam, quod tuum obstructionum directorium vacuum est', message: 'please add the novus flag to your command line because your block directory is empty');
+    Print.nota(nuntius: 'Quaeso addere novus vexillum ad imperium tuum lineam, quod tuum obstructionum directorium vacuum est', message: 'please add the incipio ex to your command line because your block directory is empty');
     exit(0);
   }
   if (syncNovus && directory.listSync().isNotEmpty) {

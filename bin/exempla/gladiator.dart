@@ -170,6 +170,7 @@ class InterioreGladiator {
   InterioreGladiator.ce({required this.input})
       : outputs = [],
         identitatis = Utils.randomHex(64);
+  InterioreGladiator.interrumpere(): input = null, outputs = [], identitatis = Utils.randomHex(64);
   InterioreGladiator.incipio(String ex, String producentis)
       : outputs = [GladiatorOutput.incipio(ex, producentis)],
         identitatis = Utils.randomHex(64);

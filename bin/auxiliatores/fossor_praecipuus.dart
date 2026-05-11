@@ -139,7 +139,7 @@ class FossorPraecipuus {
   FossorPraecipuus.coe({ required this.llttbi, required this.lfttbi }): llti = llttbi.map((mlttbi) => mlttbi.interiore.identitatis).toList();
   
   accipere({ 
-    required bool efectus, 
+    required bool efectus,//true to include expressi
     required int maxime, 
     required Iterable<Transactio> llt, 
     required Iterable<Transactio> lft, 
@@ -201,7 +201,7 @@ class FossorPraecipuus {
         // llttbi.addAll(llttba);
         llttbi.insertAll(0, llttba);
         llttbui = [];
-        if (efectus) {
+        // if (efectus) {
           int tscle = lcletbi.length;
           List<String> llttbii = [];
           llttbi.map((mlttbi) => mlttbi.interiore.identitatis).forEach(llttbii.add);
@@ -214,7 +214,7 @@ class FossorPraecipuus {
               && llttbii.any((alti) => alti == cle.interioreConnexaLiberExpressi.identitatis)
               ) && !leti.contains(et.interiore.identitatis)));
           leti.addAll(lettbi.where((wet) => !leti.contains(wet.interiore.identitatis)).map((met) => met.interiore.identitatis));
-        }
+        // }
         istxs = false;
         istxs = true;
         int tsft = lfttbui.length;
