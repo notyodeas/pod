@@ -1465,8 +1465,6 @@ class Obstructionum {
     }
     List<String> identitatumFixum = [];
     for (Transactio t in interiore.fixumTransactions) {
-      print(t.interiore.identitatis);
-      print(identitatumFixum.contains(t.interiore.identitatis));
       if (identitatumFixum.contains(t.interiore.identitatis)) return false;
       identitatumFixum.add(t.interiore.identitatis);
     }
