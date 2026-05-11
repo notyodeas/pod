@@ -1478,7 +1478,7 @@ class Obstructionum {
     return true;
   }
   bool longitudoTeliFundamentalis() {
-    return true;
+    // return true;
     if (interiore.gladiator.interiore.outputs[0].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[1].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[0].impetum.length != 4) return false;
