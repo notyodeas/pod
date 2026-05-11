@@ -1802,7 +1802,6 @@ class ParAdRimor {
             ObstructionumSalvarePervideasNuntius.ex(
                 json.decode(msg)
                     as Map<String, dynamic>);
-        print('gotbackintoissalvare');
         List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
         if (!await validateObstructionum(lo, oispn.obstructionum)) {
           Print.nota(nuntius: 'nuntius', message: 'node send back a corrupt block');
