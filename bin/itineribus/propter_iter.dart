@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:elliptic/elliptic.dart';
+import '../exempla/petitio/privatus_clavis.dart';
 
 import '../exempla/constantes.dart';
 import '../exempla/errors.dart';
@@ -118,7 +119,9 @@ Future<Response> propterSubmittereMulti(Request req) async {
   }));
 }
 Future<Response> propterPublic(Request req) async {
-  PrivateKey pk = PrivateKey.fromHex(Pera.curve(), req.params['private-key']!);
+  PrivatusClavis pc =
+      PrivatusClavis.fromJson(json.decode(await req.readAsString()));
+  PrivateKey pk = PrivateKey.fromHex(Pera.curve(), pc.ex);
   return Response.ok(json.encode(pk.publicKey.toHex()));
 }
 Future<Response> propterStatus(Request req) async {

@@ -3,7 +3,7 @@ import 'package:shelf/shelf.dart';
 import '../server.dart';
 
 Future<Response> networkNodorum(Request req) async {
-  List<String> nodes = par!.bases;
+  List<String> nodes = par!.bases.toList();
   nodes.add('${argumentis!.internumIp}:${argumentis!.pervideasPort}');
   return Response.ok(json.encode(nodes));
 }

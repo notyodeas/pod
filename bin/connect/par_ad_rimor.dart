@@ -76,7 +76,7 @@ class ParAdRimor {
   ReceivePort confussusAcciperePortum = ReceivePort();
   ReceivePort expressiAcciperePortum = ReceivePort();
   List<int> summaScandalumNumerus = [];
-  List<String> bases = [];
+  Set<String> bases = Set();
   List<Propter> rationibus = [];
   Set<Transactio> liberTransactions = Set();
   Set<Transactio> fixumTransactions = Set();
@@ -115,7 +115,7 @@ class ParAdRimor {
               UnaBasesSingulasPervideasNuntius.ex(
                   json.decode(msg) as Map<String, dynamic>);
             InConnectPervideasNuntius icpn = InConnectPervideasNuntius(
-                bases: bases,
+                bases: bases.toList(),
                 rationibus: rationibus,
                 liberTansactions: liberTransactions.toList(),
                 fixumTransactions: fixumTransactions.toList(),
@@ -219,7 +219,7 @@ class ParAdRimor {
             for (String tr in btr) {
               bases.remove(tr);
             }
-            clientis.write('${json.encode(RespondBasesPervideasNuntius(bases, PervideasNuntiusTitulus.respondSockes, [ip]).indu())}\x00');
+            clientis.write('${json.encode(RespondBasesPervideasNuntius(bases.toList(), PervideasNuntiusTitulus.respondSockes, [ip]).indu())}\x00');
             break;
           }
           case PervideasNuntiusTitulus.propter: {
@@ -278,7 +278,7 @@ class ParAdRimor {
             }
           }
           case PervideasNuntiusTitulus.prepareObstructionumSync: {
-            List<String> albumBases = bases;
+            List<String> albumBases = bases.toList();
             albumBases.removeWhere((lb) => pn.accepit.contains(lb));
             clientis.write('${json.encode(PrepareObstructionumAnswerPervideasNuntius(
                 albumBases,
@@ -1118,7 +1118,7 @@ class ParAdRimor {
                 }
                 clientis.write('${json.encode(ObstructionumReponereUnaPervideasNuntius(remove: true, obstructionum: ralop, titulus: PervideasNuntiusTitulus.obstructionumReponereUna, accepit: [ip]).indu())}\x00');
             } else if (!lop.any((alop) => alop.probationem == psfpn.summum)) {
-                clientis.write('${json.encode(DeclinareFurcaPervideasNuntius(bases, PervideasNuntiusTitulus.declinareFurca, [ip]).indu())}\x00');
+                clientis.write('${json.encode(DeclinareFurcaPervideasNuntius(bases.toList(), PervideasNuntiusTitulus.declinareFurca, [ip]).indu())}\x00');
             } 
           }
         }
@@ -1164,7 +1164,7 @@ class ParAdRimor {
   void sync({ required Sync sync }) async {
     switch (sync) {
       case Sync.novus: {
-        String nervuss = bases[random.nextInt(bases.length)];
+        String nervuss = bases.toList()[random.nextInt(bases.length)];
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(PetitioObstructionumIncipioPervideasNuntius(
@@ -1221,7 +1221,7 @@ class ParAdRimor {
       }
       case Sync.pergo: {
         Obstructionum prior = await Obstructionum.acciperePrior(directorium);
-        String nervuss = bases[random.nextInt(bases.length)];
+        String nervuss = bases.toList()[random.nextInt(bases.length)];
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(PetitioObstructionumPervideasNuntius(prior.probationem,
@@ -1300,7 +1300,7 @@ class ParAdRimor {
     if (bases.isEmpty) {
       return;
     }
-    String nervuss = bases[random.nextInt(bases.length)];
+    String nervuss = bases.toList()[random.nextInt(bases.length)];
     Socket nervus = await Socket.connect(nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
     nervus.write('${json.encode(PervideasNuntius(PervideasNuntiusTitulus.petitioSockets, [ip]).indu())}\x00');
     List<int> buffer = [];
@@ -1378,7 +1378,7 @@ class ParAdRimor {
     }
     fixumTransactions.add(tx);
     await filterOnline();
-        String nervuss = bases[random.nextInt(bases.length)];
+        String nervuss = bases.toList()[random.nextInt(bases.length)];
         Socket nervus = await Socket.connect(
             nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
         nervus.write('${json.encode(TransactioPervideasNuntius(
@@ -1508,7 +1508,7 @@ class ParAdRimor {
     ReceivePort rp = ReceivePort();
     List<String> conatus = [];
     List<String> extra = [];
-    String nervuss = bases[random.nextInt(bases.length)];
+    String nervuss = bases.toList()[random.nextInt(bases.length)];
     Socket nervus = await Socket.connect(
       nervuss.split(':')[0], int.parse(nervuss.split(':')[1]));
     nervus.write('${json.encode(PosseSyncFurcaPervideasNuntius(summum, PervideasNuntiusTitulus.posseSyncFurca, [ip]).indu())}\x00');
@@ -1943,6 +1943,7 @@ class ParAdRimor {
 
     if (!await obstructionum.validateDivisia(lo)) {
       Print.nota(nuntius: 'nuntius', message: 'corrupt divisia');
+      return false;
     }
     if (!obstructionum.isProbationem()) {
       Print.nota(
@@ -1992,6 +1993,7 @@ class ParAdRimor {
     }
     for (Transactio t in obstructionum.interiore.expressiTransactions) {
       if (!await t.inventum(lo, obstructionum)) {
+        Print.nota(nuntius: 'nuntius', message: 'invalid expressi tx');
         return false;
       }
     }
@@ -2138,14 +2140,18 @@ class ParAdRimor {
           return false;
         }
         if (!obstructionum.convalidandumExpressiMoles()) {
+          Print.nota(nuntius: 'nuntius', message: 'invalid expressi');
           Print.obstructionumReprobatus();
           return false;
         }
         if (!await obstructionum.convalidandumRationibus(lo)) {
+          Print.nota(nuntius: '', message: 'rationibus');
           Print.obstructionumReprobatus();
           return false;
         }
-        if (!obstructionum.longitudoTeliFundamentalis()) {
+        if (!obstructionum.longitudoTeliFundamentalis()) 
+        {
+          Print.nota(nuntius: '', message: 'fundamentalis');
           Print.obstructionumReprobatus();
           return false;
         }

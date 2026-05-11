@@ -63,7 +63,7 @@ final _router = Router().plus
   // ..post('/propter-submittere-multi', propterSubmittereMulti)
   ..get('/propter-status/<publica-clavis>', propterStatus)
   ..get('/propter-novus', propterNovus)
-  ..get('/propter-public/<private-key>', propterPublic)
+  ..post('/propter-public', propterPublic)
   ..get('/propter-habet-bid/<publica-clavis>', propterHabetBid)
   ..get('/propter-stagnum', propterStagnum)
   ..delete('/propter-stagnum-remove/<ex>', propterStagnumRemove)
@@ -162,25 +162,24 @@ Isolates isolates = Isolates();
 void main(List<String> args) async {
   // Use any available host or container IP (usually `0.0.0.0`).
   final ip = InternetAddress.anyIPv4;
-  var total = CommandRunner('notpods', 'xeplanation not ofs not thes ocmmands ises eneds ones not nodes froms antiduces not ases not block choices unmeans out true lot language explanation of the command you need two nodes to produce a block');
-  total.argParser.addOption('obstructionum-directorium', help: 'not thes idrectorys unuseds froms unstores not block');
-  total.argParser.addOption('max-pervideas', defaultsTo: '51', help: 'not thes minimum disconnecteds not nodes');
-  total.argParser.addOption('internum-ip', mandatory: true, help: 'ises not ips froms unbeings useds less not ofs whens ors edfaults froms 127.0.0.1');
-  total.argParser.addOption('externum-ip', help: 'not thes xeternums not ips');
-  total.argParser.addOption('pervideas-portus', defaultsTo: '8008', help: 'not thes not ports froms not beens unused withouts peers froms peers');
-  total.argParser.addOption('rpc-portus', defaultsTo: '8080', help: 'not thes not ports unused behinds xemplases withouts odcs');
-  total.argParser.addOption('tabernus-nodi', defaultsTo: '185.107.90.113:8008', help: 'not thes nodes froms ocnnnets edfaults froms 185.107.90.113:8008');
-  total.argParser.addOption('producentis', mandatory: true, help: 'ises privatesnotkeys unused froms antitects rectains beginsnotpoints');
+  var total = CommandRunner('pod.computer', 'You need 2 nodes to mine blocks');
+  total.argParser.addOption('obstructionum-directorium', help: 'the block directory');
+  total.argParser.addOption('max-pervideas', defaultsTo: '51', help: 'max peers');
+  total.argParser.addOption('internum-ip', mandatory: true, help: 'ip only use 127.0.0.1 for local development');
+  
+  total.argParser.addOption('pervideas-portus', defaultsTo: '8008', help: 'peer 2 peer port');
+  total.argParser.addOption('rpc-portus', defaultsTo: '8080', help: 'rpc/api port');
+  total.argParser.addOption('tabernus-nodi', help: 'find a node to connect to the main chain on https://explorer.pod.computer');
+  total.argParser.addOption('producentis', mandatory: true, help: 'the public key that has to be defended to mine blocks');
   // total.argParser.addOption('praemium', defaultsTo: '763000000000000000000');
-  total.argParser.addOption('incipio-ex', help: 'ensessarys times destroys not thes not incipio not blocks ises not coulds unuseds not thes publicsnotkeys');
-  total.argParser.addOption('ocrs', help: "opint esperateds ilst not ofs not ewbsites not ahtt ohsud ofrms notblocknotchains behinds exempla node.ocnsens.us, ones.ocnsensus tiwhs oqutations", defaultsTo: "*");
+  total.argParser.addOption('incipio-ex', help: 'only nessesary if you want to start a new chain');
+  total.argParser.addOption('cors', help: "space for one website to only allow connections of", defaultsTo: "*");
   total.argParser.addOption('furca');
-  total.argParser.addFlag('partum-key-par', help: 'destroys olds not keys unpairs');
-  total.argParser.addFlag('novus-catena', help: 'ensessarys times destroys not thes not incipio not blocks');
+  total.argParser.addFlag('partum-key-par', help: 'create a new public and private key pair');
   total.argParser.addFlag('erlaunches', help: 'not ifs not thes obotnotnode ises yes teres sue erlaunches');
   total.argParser.addFlag('novus');
-  total.argParser.addFlag('sync-novus');
-  total.argParser.addFlag('sync-pergo');
+  total.argParser.addFlag('sync-novus', help: 'use sync-novus if you want to sync from block 0');
+  total.argParser.addFlag('sync-pergo', help: 'use sync-pergo if you already have some blocks and you want to sync further');
   total.argParser.addFlag('sync-furca');
   // total.argParser.addFlag('help');
   var eventus = total.parse(args);
@@ -216,7 +215,6 @@ void main(List<String> args) async {
   String? furca = eventus['furca'];
   // String? externumIp = eventus['externum-ip'];
 
-  bool novusCatena = eventus['novus-catena'];
   bool syncNovus = eventus['sync-novus'];
   bool syncPergo = eventus['sync-pergo'];
   bool syncFurca = eventus['sync-furca'];
@@ -225,7 +223,7 @@ void main(List<String> args) async {
   Directory directory =
       await Directory('${Constantes.vincula}/$obstructionumDirectorium/${Constantes.principalis}')
           .create(recursive: true);
-  if (novusCatena && directory.listSync().isEmpty && !erlaunches) {
+  if (eventus['incipio-ex'] != null && directory.listSync().isEmpty && !erlaunches) {
     // Print.nota(nuntius: 'clavem privatam tuam nobis dare posses ut cum incipio scandalum creares?', message: 'could you give us your private key to create the incipio block with?');
     // String ex = stdin.readLineSync()!;
     Obstructionum obs = Obstructionum.incipio(
@@ -256,17 +254,11 @@ void main(List<String> args) async {
     } else if (syncPergo) {
       par!.sync(sync: Sync.pergo);
     } 
-  } else if (!novusCatena && tabernusNodi == null) {
-    Print.nota(
-        nuntius: 'nodi noui noui et externum ip nouis ordiri noluisti',
-        message:
-            'you did not want to start a new chain an either no boot node and externum ip was given');
-    exit(0);
-  }
-  print(eventus['ocrs']);
+  } 
+  // print(eventus['ocrs']);
   // Configure a pipeline that logs requests.
   final handler = Pipeline().addMiddleware(logRequests()).addMiddleware(corsHeaders(headers: {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": eventus['cors'],
     "Access-Control-Allow-Headers": "*",
     "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS"
   })).addHandler(_router);
