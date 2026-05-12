@@ -593,7 +593,7 @@ class Obstructionum {
     Set<InritaTransactio> inritaTransactions = args[19];
     List<Propter> lp = [];
     gladiatorInimicus.interiore.outputs.map((o) => o.rationibus).forEach(lp.addAll);
-    lttip.addAll(prior.interiore.expressiTransactions.where((e) => lp.any((p) => p.interiore.publicaClavis == e.interiore.dominus || p.interiore.publicaClavis == e.interiore.recipiens)));
+    lttip.addAll(prior.interiore.expressiTransactions);
     
     COE coe = await COE.computo(victimaPrimis: ip.victima.primis, 
     inimicusPrimis: inimicusPrimis, maxime: 7630 - prior.interiore.expressiTransactions.length, ex: ip.ex, prior: prior, gladiatorVictima: gladiatorVictima, gladiatorInimicus: gladiatorInimicus, llt: lttip.toList(), lo: lo);
@@ -1594,7 +1594,7 @@ class Obstructionum {
     return true;
   }
   bool longitudoTeliFundamentalis() {
-    return true;
+    // return true;
     if (interiore.gladiator.interiore.outputs[0].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[1].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[0].impetum.length != 4) return false;
