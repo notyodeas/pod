@@ -662,9 +662,9 @@ class Obstructionum {
             .bytes);
           stdout.write('\r $probationem');
       } while (!probationem.startsWith('0' *
-              (interioreObstructionum.obstructionumDifficultas / 2).floor()) ||
+              (interioreObstructionum.obstructionumDifficultas / 2).ceil()) ||
           !probationem.endsWith('0' *
-              (interioreObstructionum.obstructionumDifficultas / 2).floor()));
+              (interioreObstructionum.obstructionumDifficultas / 2).ceil()));
       if (!toCrack.every((tc) => probationem.contains(tc))) {
         continue;
       } else {

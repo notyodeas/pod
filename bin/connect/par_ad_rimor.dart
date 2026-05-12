@@ -1940,7 +1940,7 @@ class ParAdRimor {
           return false;
         }
     } else {
-      int zeros = (obstructionum.interiore.obstructionumDifficultas / 2).floor();
+      int zeros = (obstructionum.interiore.obstructionumDifficultas / 2).ceil();
       if (!obstructionum.probationem.startsWith('0' * zeros) && !obstructionum.probationem.endsWith('0' * zeros)) {
         Print.nota(nuntius: 'nuntius', message: 'corrupt obstructionumDifficultas');
         return false;
