@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:elliptic/elliptic.dart';
+import 'package:ez_validator/ez_validator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:tuple/tuple.dart';
 import '../auxiliatores/fossor_praecipuus.dart';
 import '../auxiliatores/requiritur_in_probationem.dart';
 import '../exempla/errors.dart';
@@ -15,12 +17,21 @@ import '../exempla/si_remotionem.dart';
 import '../exempla/transactio.dart';
 import '../exempla/constantes.dart';
 import '../server.dart';
-
+final expressiSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required(),
+  'victima': EzSchema.shape({
+    'identitatis': EzValidator<String>().required(),
+    'primis': EzValidator().boolean().required()
+  })
+}, noUnknown: true);
 Future<Response> fossorExpressi(Request req) async {
   bool estFurca = bool.parse(req.params['furca']!);
   try {
+    Map<String, dynamic> corpus = json.decode(await req.readAsString());
+    final ez = expressiSchema.catchErrors(corpus);
+    if (ez.isNotEmpty) return Response.badRequest(body: json.encode(BadRequest(code: 4, nuntius: 'nuntius', message: json.encode(ez) )));
     IncipitPugna ip =
-      IncipitPugna.fromJson(json.decode(await req.readAsString()));
+    IncipitPugna.fromJson(corpus);
     Directory directorium =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
     Obstructionum prior = await Obstructionum.acciperePrior(directorium);
@@ -57,9 +68,8 @@ Future<Response> fossorExpressi(Request req) async {
     if (publica != argumentis!.publicaClavis) {
       return Response.badRequest(body: json.encode(BadRequest(code: 3, nuntius: 'doleo te solum posse meum confussum vel expressi cum clavis privatis quae ad argumentum producentis in nodi launch datam pertinet', message: 'sorry you can only mine a confussus or expressi with the private key that belongs to the argument of producentis given on node launch')));
     }
-    bool inimicusPrimis = await Pera.isPrimis(publica, directorium);
-    String gladiatorInimicusIdentitatis = await Pera.accipereGladiatorIdentitatis(publica, directorium);
-    Gladiator? gladiatorInimicus = await Obstructionum.grabGladiator(gladiatorInimicusIdentitatis, lo);
+    Tuple2<String, bool> pg = await Pera.accipereGladiatorIdentitatisPrimis(publica, directorium);
+    Gladiator? gladiatorInimicus = await Obstructionum.grabGladiator(pg.item1, lo);
     if (gladiatorInimicus == null) {
       return Response.badRequest(
           body: json.encode({
@@ -72,13 +82,10 @@ Future<Response> fossorExpressi(Request req) async {
     lttip.addAll(par!.liberTransactions);
     Iterable<Transactio> ltsr = par!.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!));
     lttip.addAll(ltsr);
-    final primis = await Pera.isPrimis(publica, directorium);
-    final gladiatorIdentitatis =
-        await Pera.accipereGladiatorIdentitatis(publica, directorium);  
-    List<String> scuta = await RequiriturInProbationem.requiriturInProbationem(primis, gladiatorIdentitatis, ip.victima, lo);    ReceivePort acciperePortus = ReceivePort();
+    List<String> scuta = await RequiriturInProbationem.requiriturInProbationem(pg.item2, pg.item1, ip.victima, lo);    ReceivePort acciperePortus = ReceivePort();
     stamina.expressiThreads.add(await Isolate.spawn(Obstructionum.expressi,
-        List<dynamic>.from([estFurca, ip, primis, gladiatorIdentitatis, argumentis!.publicaClavis,
-        lo, prior, scuta, inimicusPrimis, gladiatorVictima, gladiatorInimicus, lttip,
+        List<dynamic>.from([estFurca, ip, pg.item2, pg.item1, argumentis!.publicaClavis,
+        lo, prior, scuta, gladiatorVictima, gladiatorInimicus, lttip,
         par!.fixumTransactions, par!.expressiTransactions, par!.connexiaLiberExpressis, par!.siRemotiones, par!.rationibus,
         par!.solucionisRationibus, par!.fissileSolucionisRationibus, par!.inritaTransactions, acciperePortus.sendPort])));
     acciperePortus.listen((nuntius) async {

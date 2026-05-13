@@ -7,14 +7,17 @@ environment:
   sdk: ^3.1.0
 
 dependencies:
+  acanthis: ^1.5.4
   args: ^2.4.2
   crypto: ^3.0.3
   dart_console: ^4.1.0
   dbcrypt: ^2.0.0
   ecdsa: ^0.0.4
   encoder: ^1.0.0
+  ez_validator: ^0.3.7
   hex: ^0.2.0
   jaguar_jwt: ^3.0.0
+  json_schema_matcher: ^1.0.3
   shelf: ^1.4.0
   shelf_cors_headers: ^0.1.5
   shelf_plus: ^1.8.0

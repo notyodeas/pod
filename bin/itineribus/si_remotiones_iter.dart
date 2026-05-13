@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:ecdsa/ecdsa.dart';
+import 'package:ez_validator/ez_validator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import '../exempla/constantes.dart';
@@ -23,10 +24,20 @@ class Dominium {
   Transactio transactio;
   Dominium(this.publicaClavis, this.transactio);
 }
+final proofSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required(),
+  'interiore': EzSchema.shape({
+      'primis': EzValidator().boolean().required(),
+      'identitatis': EzValidator<String>().required()
+  }, noUnknown: true)
+}, noUnknown: true);
 
 Future<Response> siRemotionessubmittereProof(Request req) async {
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = proofSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(ez));
   SubmittereSiRemotionem ssr =
-      SubmittereSiRemotionem.fromJson(json.decode(await req.readAsString()));
+      SubmittereSiRemotionem.fromJson(corpus);
       //its not only setting this to null i mean or null its also about checking if the identitatis is illegal or should that only be on obstructionum sync
       // no for here just null is fine but for the propendam when you would use the siremotionem to be an output of si remotionem we should first check if the id is not forbidden
   Transactio? lt = ssr.interiore.liber

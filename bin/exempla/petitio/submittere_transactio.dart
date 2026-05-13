@@ -1,3 +1,5 @@
+import 'package:ez_validator/ez_validator.dart';
+
 import '../constantes.dart';
 
 class SubmittereTransaction {
@@ -16,3 +18,9 @@ class SubmittereTransaction {
         JSON.pod: pod,
       };
 }
+
+final submittereTransactionSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required(),
+  'to': EzValidator<String>().required(),
+  'pod': EzValidator<String>().required()
+}, noUnknown: true);

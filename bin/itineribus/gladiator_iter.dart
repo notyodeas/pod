@@ -18,18 +18,30 @@ import '../exempla/responsio/summa_bid_arma.dart';
 import '../exempla/telum.dart';
 import '../server.dart';
 import 'package:collection/collection.dart';
-
+import '../auxiliatores/requiritur_in_probationem.dart';
+import '../exempla/petitio/incipit_pugna.dart';
 Future<Response> gladiatorInvictos(Request req) async {
   Directory directory =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
-  List<Tuple3<String, GladiatorOutput, bool>> gladiatores =
+  List<Tuple5<String, GladiatorOutput, bool, List<String>, List<String>>> gladiatores =
       await Obstructionum.invictosGladiatores(directory);
   final List<InvictosGladiator> invictos = [];
-  for (Tuple3<String, GladiatorOutput, bool> gladiator in gladiatores) {
+  for (Tuple5<String, GladiatorOutput, bool, List<String>, List<String>> gladiator in gladiatores) {
     invictos.add(
-        InvictosGladiator(gladiator.item1, gladiator.item2, gladiator.item3));
+        InvictosGladiator(gladiator.item1, gladiator.item2, gladiator.item3, gladiator.item4, gladiator.item5));
   }
   return Response.ok(json.encode(invictos.map((e) => e.toJson()).toList()));
+}
+Future<Response> gladiatorArmaNecessaria(Request req) async {
+  Directory directory =
+      Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
+  List<Obstructionum> lo = await Obstructionum.getBlocks(directory);
+  bool tuusPrimis = bool.parse(req.params['tuus-primis']!);
+  String tuusIdentitatis = req.params['tuus-identitatis']!;
+  bool victimaPrimis = bool.parse(req.params['victima-primis']!);
+  String victimaIdentitatis =req.params['victima-identitatis']!;
+  List<String> scuta = await RequiriturInProbationem.requiriturInProbationem(tuusPrimis, tuusIdentitatis, Victima(victimaPrimis, victimaIdentitatis), lo);
+  return Response.ok(json.encode(scuta));
 }
 
 Future<Response> gladiatorDefenditur(Request req) async {
@@ -58,21 +70,20 @@ Future<Response> gladiatorArma(Request req) async {
     Directory directory =
         Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
     List<Obstructionum> lo = await Obstructionum.getBlocks(directory);
-    final primis = await Pera.isPrimis(publica, directory);
-    final gladiatorIdentitatis =
-        await Pera.accipereGladiatorIdentitatis(publica, directory);
+    final Tuple2<String, bool> tsb =
+        await Pera.accipereGladiatorIdentitatisPrimis(publica, directory);
     final String basisDefensio = await Pera.turpiaGladiatoriaTelum(
-        primis, false, gladiatorIdentitatis, lo);
+        tsb.item2, false, tsb.item1, lo);
     final basisImpetum =
-        await Pera.turpiaGladiatoriaTelum(primis, true, gladiatorIdentitatis, lo);
+        await Pera.turpiaGladiatoriaTelum(tsb.item2, true, tsb.item1, lo);
     final List<Telum> liberDefensiones =
-        await Pera.maximeArma(liber: true, primis: primis, impetum: false, gladiatorIdentitatis:  gladiatorIdentitatis, publica: publica, lo: lo);
+        await Pera.maximeArma(liber: true, primis: tsb.item2, impetum: false, gladiatorIdentitatis:  tsb.item1, publica: publica, lo: lo);
     final List<Telum> liberImpetus =
-        await Pera.maximeArma(liber: true, primis: primis, impetum: true, gladiatorIdentitatis:  gladiatorIdentitatis, publica: publica, lo: lo);
+        await Pera.maximeArma(liber: true, primis: tsb.item2, impetum: true, gladiatorIdentitatis:  tsb.item1, publica: publica, lo: lo);
     final List<Telum> fixumDefensiones =
-        await Pera.maximeArma(liber: false, primis: primis, impetum: false, gladiatorIdentitatis:  gladiatorIdentitatis, publica: publica, lo: lo);
+        await Pera.maximeArma(liber: false, primis: tsb.item2, impetum: false, gladiatorIdentitatis:  tsb.item1, publica: publica, lo: lo);
     final List<Telum> fixumImpetus =
-        await Pera.maximeArma(liber: false, primis: primis, impetum: true, gladiatorIdentitatis:  gladiatorIdentitatis, publica: publica, lo: lo);
+        await Pera.maximeArma(liber: false, primis: tsb.item2, impetum: true, gladiatorIdentitatis:  tsb.item1, publica: publica, lo: lo);
     GladiatorArma ga = GladiatorArma(
         basisDefensio: basisDefensio,
         basisImpetum: basisImpetum,
@@ -84,6 +95,18 @@ Future<Response> gladiatorArma(Request req) async {
   } on BadRequest catch (e) {
     return Response.badRequest(body: json.encode(e.toJson()));
   }
+}
+Future<Response> gladiatorIdentitatis(Request req) async {
+  try {
+    final String publica = req.params['publica-clavis']!;
+    Directory directory =
+        Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
+    Tuple2<String, bool> tp = await Pera.accipereGladiatorIdentitatisPrimis(publica, directory);
+    return Response.ok(json.encode({'primis': tp.item2, 'identitatis': tp.item1 }));
+  } catch (e) {
+    return Response.badRequest(body: json.encode(BadRequest(code: 0, nuntius: '', message: 'public key is not defended')));
+  }
+    
 }
 
 Future<Response> gladiatorSummaBidArma(Request req) async {
@@ -107,21 +130,19 @@ Future<Response> algiatornotbidantibationem(Request req) async {
   Directory directory =
         Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
   List<Obstructionum> lo = await Obstructionum.getBlocks(directory);
-  final primis = await Pera.isPrimis(privatesnotkeys, directory);
-  final gladiatorIdentitatis =
-      await Pera.accipereGladiatorIdentitatis(privatesnotkeys, directory);
+  final Tuple2<String, bool> tp = await Pera.accipereGladiatorIdentitatisPrimis(privatesnotkeys, directory); 
   final String basisDefensio = await Pera.turpiaGladiatoriaTelum(
-      primis, false, gladiatorIdentitatis, lo);
+      tp.item2, false, tp.item1, lo);
   final basisImpetum =
-      await Pera.turpiaGladiatoriaTelum(primis, true, gladiatorIdentitatis, lo);
+      await Pera.turpiaGladiatoriaTelum(tp.item2, true, tp.item1, lo);
   final List<Telum> liberDefensiones =
-      await Pera.maximeArma(liber: true, primis: primis, impetum: false, gladiatorIdentitatis:  gladiatorIdentitatis, publica: privatesnotkeys, lo: lo);
+      await Pera.maximeArma(liber: true, primis: tp.item2, impetum: false, gladiatorIdentitatis:  tp.item1, publica: privatesnotkeys, lo: lo);
   final List<Telum> liberImpetus =
-      await Pera.maximeArma(liber: true, primis: primis, impetum: true, gladiatorIdentitatis:  gladiatorIdentitatis, publica: privatesnotkeys, lo: lo);
+      await Pera.maximeArma(liber: true, primis: tp.item2, impetum: true, gladiatorIdentitatis:  tp.item1, publica: privatesnotkeys, lo: lo);
   final List<Telum> fixumDefensiones =
-      await Pera.maximeArma(liber: false, primis: primis, impetum: false, gladiatorIdentitatis:  gladiatorIdentitatis, publica: privatesnotkeys, lo: lo);
+      await Pera.maximeArma(liber: false, primis: tp.item2, impetum: false, gladiatorIdentitatis:  tp.item1, publica: privatesnotkeys, lo: lo);
   final List<Telum> fixumImpetus =
-      await Pera.maximeArma(liber: false, primis: primis, impetum: true, gladiatorIdentitatis:  gladiatorIdentitatis, publica: privatesnotkeys, lo: lo);
+      await Pera.maximeArma(liber: false, primis: tp.item2, impetum: true, gladiatorIdentitatis:  tp.item1, publica: privatesnotkeys, lo: lo);
   GladiatorArma ga = GladiatorArma(
         basisDefensio: basisDefensio,
         basisImpetum: basisImpetum,

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:isolate';
 import 'package:elliptic/elliptic.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:tuple/tuple.dart';
 import '../auxiliatores/fossor_praecipuus.dart';
 import '../auxiliatores/requiritur_in_probationem.dart';
 import '../exempla/errors.dart';
@@ -15,12 +16,24 @@ import '../exempla/transactio.dart';
 import 'package:shelf/shelf.dart';
 import '../exempla/constantes.dart';
 import '../server.dart';
+import 'package:ez_validator/ez_validator.dart';
+
+final confussusSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required(),
+  'victima': EzSchema.shape({
+    'identitatis': EzValidator<String>().required(),
+    'primis': EzValidator().boolean().required()
+  })
+}, noUnknown: true);
 
 Future<Response> fossorConfussus(Request req) async {
   bool estFurca = bool.parse(req.params['furca']!);
   try {
+    Map<String, dynamic> corpus = json.decode(await req.readAsString());
+    final ez = confussusSchema.catchErrors(corpus);
+    if (ez.isNotEmpty) return Response.badRequest(body: json.encode(BadRequest(code: 4, nuntius: 'nuntius', message: json.encode(ez) )));
     IncipitPugna ip =
-    IncipitPugna.fromJson(json.decode(await req.readAsString()));
+    IncipitPugna.fromJson(corpus);
     Directory directorium =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
 
@@ -64,9 +77,8 @@ Future<Response> fossorConfussus(Request req) async {
     List<Transactio> ltsr = [];
     ltsr.addAll(par!.liberTransactions);
     ltsr.addAll(par!.siRemotiones.where((wsr) => wsr.interiore.siRemotionemInput != null).map((msr) => Transactio.nullam(msr.interiore.siRemotionemInput!.interioreTransactio!)));
-    bool inimicusPrimis = await Pera.isPrimis(publica, directorium);
-    String gladiatorInimicusIdentitatis = await Pera.accipereGladiatorIdentitatis(publica, directorium);
-    Gladiator? gladiatorInimicus = await Obstructionum.grabGladiator(gladiatorInimicusIdentitatis, lo);
+    Tuple2<String, bool> gladiatorData = await Pera.accipereGladiatorIdentitatisPrimis(publica, directorium);
+    Gladiator? gladiatorInimicus = await Obstructionum.grabGladiator(gladiatorData.item1, lo);
     
     if (gladiatorInimicus == null) {
       return Response.badRequest(
@@ -76,17 +88,13 @@ Future<Response> fossorConfussus(Request req) async {
         "message": "Gladiator already defeaten or not found with your private key"
       }));
     }
-    final primis = await Pera.isPrimis(publica, directorium);
-    final gladiatorIdentitatis =
-        await Pera.accipereGladiatorIdentitatis(publica, directorium);
-    List<String> scuta = await RequiriturInProbationem.requiriturInProbationem(primis, gladiatorIdentitatis, ip.victima, lo);
+    List<String> scuta = await RequiriturInProbationem.requiriturInProbationem(gladiatorData.item2, gladiatorData.item1, ip.victima, lo);
     ReceivePort acciperePortus = ReceivePort();
     stamina.confussusThreads.add(await Isolate.spawn(Obstructionum.confussus,
         List<dynamic>.from([estFurca, ip, 
-        inimicusPrimis, prior,gladiatorVictima,
-         gladiatorInimicus, lo,
-          publica, primis, 
-          gladiatorIdentitatis, scuta, 
+        gladiatorData.item2, prior,gladiatorVictima,
+         gladiatorInimicus, lo, 
+          gladiatorData.item1, scuta, 
           par!.liberTransactions, par!.fixumTransactions, 
           par!.expressiTransactions, par!.connexiaLiberExpressis, 
           par!.siRemotiones, par!.rationibus, 

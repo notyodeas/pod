@@ -18,8 +18,11 @@ import '../server.dart';
 import 'package:collection/collection.dart';
 
 Future<Response> submittereTransactioLiber(Request req) async {
-  SubmittereTransaction st =
-      SubmittereTransaction.fromJson(json.decode(await req.readAsString()));
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = submittereTransactionSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(ez));
+   SubmittereTransaction st =
+      SubmittereTransaction.fromJson(corpus);
   Directory directorium =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
   try {

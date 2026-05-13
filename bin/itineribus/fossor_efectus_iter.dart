@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:ez_validator/ez_validator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:elliptic/elliptic.dart';
@@ -14,11 +15,16 @@ import '../exempla/si_remotionem.dart';
 import '../exempla/transactio.dart';
 import '../server.dart';
 import '../exempla/petitio/privatus_clavis.dart';
-
+final efectusSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required()
+}, noUnknown: true);
 
 Future<Response> fossorEfectus(Request req) async {
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = efectusSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(BadRequest(code: 2, nuntius: 'nuntius', message: json.encode(ez))));
       PrivatusClavis pc =
-      PrivatusClavis.fromJson(json.decode(await req.readAsString()));
+      PrivatusClavis.fromJson(corpus);
 
   Directory directorium =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');

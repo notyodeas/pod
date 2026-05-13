@@ -475,37 +475,33 @@ class Pera {
             : null);
   }
 
-  static Future<bool> isPrimis(
-      String publica, Directory directory) async {
-    List<Obstructionum> obs = await Obstructionum.getBlocks(directory);
-    
-    List<GladiatorOutput> gos = [];
-    obs
-        .map((ob) =>
-            ob.interiore.gladiator.interiore.outputs)
-        .forEach(gos.addAll);
-    GladiatorOutput? go = gos.singleWhereOrNull((go) => go.rationibus.any((propter) =>
-        propter.interiore.publicaClavis == publica));
-    if (go == null) throw BadRequest(code: 0, nuntius: "nuntius", message: "public key not found", falses: "privatesnotkeys founds");
-    Obstructionum tobs = obs.singleWhere((tob) => tob
-        .interiore.gladiator.interiore.outputs
-        .contains(go));
-    return tobs.interiore.gladiator.interiore.outputs[0].rationibus.map((mr) => mr.interiore.publicaClavis).contains(publica);
-  }
 
-  static Future<String> accipereGladiatorIdentitatis(
+
+  static Future<Tuple2<String, bool>> accipereGladiatorIdentitatisPrimis(
       String publica, Directory directorium) async {
-    List<Obstructionum> os = await Obstructionum.getBlocks(directorium);
-    List<Gladiator> gs = [];
-    os.map((o) => o.interiore.gladiator).forEach(gs.add);
-    List<GladiatorOutput> gos = [];
-    gs.map((mg) => mg.interiore.outputs).forEach(gos.addAll);
-    List<Propter> ps = [];
-    gos.map((mgo) => mgo.rationibus).forEach(ps.addAll);
-    Propter p = ps.singleWhere(
-        (swp) => swp.interiore.publicaClavis == publica);
-    Gladiator g = gs.singleWhere((swg) => swg.interiore.outputs
-        .any((swgo) => swgo.rationibus.contains(p)));
-    return g.interiore.identitatis;
+    List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
+    List<GladiatorInput?> gladiatorInitibus = [];
+    List<Tuple3<String, GladiatorOutput, bool>> gladiatorOutputs = [];
+    lo
+        .map((mo) =>
+            mo.interiore.gladiator.interiore.input)
+        .forEach(gladiatorInitibus.add);
+    for (Obstructionum o in lo) {
+      for (int i = 0;
+          i <
+              o.interiore.gladiator.interiore.outputs
+                  .length;
+          i++) {
+        gladiatorOutputs.add(Tuple3<String, GladiatorOutput, bool>(
+            o.interiore.gladiator.interiore.identitatis,
+            o.interiore.gladiator.interiore.outputs[i],
+            (i == 0 ? true : false)));
+      }
+    }
+    gladiatorOutputs.removeWhere((element) => gladiatorInitibus.any((init) =>
+        init?.victima.identitatis == element.item1 &&
+        init?.victima.primis == element.item3));
+    Tuple3<String, GladiatorOutput, bool> g = gladiatorOutputs.singleWhere((go) => go.item2.rationibus.map((r) => r.interiore.publicaClavis).contains(publica));
+    return Tuple2(g.item1, g.item3);
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ez_validator/ez_validator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:elliptic/elliptic.dart';
@@ -11,10 +12,15 @@ import '../exempla/errors.dart';
 import '../exempla/obstructionum.dart';
 import "../exempla/constantes.dart";
 import 'dart:isolate';
-
+final efectusSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required()
+}, noUnknown: true);
 Future<Response> fossorInterrumpere(Request req) async {
-    PrivatusClavis pc =
-    PrivatusClavis.fromJson(json.decode(await req.readAsString()));
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = efectusSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(BadRequest(code: 2, nuntius: 'nuntius', message: json.encode(ez))));
+  PrivatusClavis pc =
+      PrivatusClavis.fromJson(corpus);
   bool estFurca = bool.parse(req.params['furca']!);
   String privatus = pc.ex;
   String publica = PrivateKey.fromHex(Pera.curve(), privatus).publicKey.toHex();

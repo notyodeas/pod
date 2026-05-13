@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:ez_validator/ez_validator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:elliptic/elliptic.dart';
 import 'package:shelf_router/shelf_router.dart';
@@ -15,10 +16,16 @@ import '../exempla/petitio/submittere_solucionis.dart';
 import '../exempla/solucionis_propter.dart';
 import '../exempla/transactio.dart';
 import '../server.dart';
-
+final solucionisSchema = EzSchema.shape({
+  'solucionis': EzValidator<String>().required(),
+  'accipientis': EzValidator<String>().required()
+}, noUnknown: true);
 
 Future<Response> solucionisSubmittereSolocionisPropter(Request req) async {
-  SubmittereSolucionisPropter ssr = SubmittereSolucionisPropter.fromJson(json.decode(await req.readAsString()));
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = solucionisSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(ez));
+  SubmittereSolucionisPropter ssr = SubmittereSolucionisPropter.fromJson(corpus);
   PrivateKey privatus = PrivateKey.fromHex(Pera.curve(), ssr.solucionis);
   String publica = privatus.publicKey.toHex();
   if (publica == ssr.accipientis) {
@@ -90,8 +97,15 @@ Future<Response> solucionisFissileStatus(Request req) async {
     }
     return Response.notFound("");
 }
+final cashExSchema = EzSchema.shape({
+  'liber': EzValidator().boolean().required(),
+  'ex': EzValidator<String>().required()
+}, noUnknown: true);
 Future<Response> solucionisCashEx(Request req) async {
-  SolucionisCashEx sce = SolucionisCashEx.fromJson(await json.decode(await req.readAsString()));
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = cashExSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(ez));
+  SolucionisCashEx sce = SolucionisCashEx.fromJson(corpus);
   String publica = PrivateKey.fromHex(Pera.curve(), sce.ex).publicKey.toHex();
   Directory directorium = Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
   List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
@@ -118,9 +132,21 @@ Future<Response> solucionisCashEx(Request req) async {
     "transactioIdentitatis": it.identitatis
   }));      
 }
+final fixsSchema = EzSchema.shape({
+  'pod': EzValidator<String>().required(),
+  'accipientis': EzValidator<String>().required()
+}, noUnknown: true);
+final fissileSolucionisSchema = EzSchema.shape({
+  'solucionis': EzValidator<String>().required(),
+  'reliquiae': EzValidator<String>().required(),
+  'fixs': EzValidator().arrayOf(EzValidator<Map<String, dynamic>>().schema(fixsSchema))
+}, noUnknown: true);
 
 Future<Response> solucionisSubmittereFissileSolocionisPropter(Request req) async {
-  SubmittereFissileSolucionisPropter sfsr = SubmittereFissileSolucionisPropter.fromJson(json.decode(await req.readAsString()));
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = fissileSolucionisSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(ez));
+  SubmittereFissileSolucionisPropter sfsr = SubmittereFissileSolucionisPropter.fromJson(corpus);
   // if (sfsr.fixs.where((wf) => wf.reliquiae).length != 1) {
   //   return Response.badRequest(body: json.encode(BadRequest(code: 0, nuntius: 'certum pretium rationem habere unum superfuit receptoris', message: 'a fixed payment account should have only one left over receiver')));
   // }
@@ -150,7 +176,10 @@ Response solucionisFissileStagnum(Request req) {
 }
 Future<Response> solucionisFissileCashEx(Request req) async {
   try {
-    SolucionisCashEx sce = SolucionisCashEx.fromJson(await json.decode(await req.readAsString()));
+    Map<String, dynamic> corpus = json.decode(await req.readAsString());
+    final ez = solucionisSchema.catchErrors(corpus);
+    if (ez.isNotEmpty) return Response.badRequest(body: json.encode(ez));
+    SolucionisCashEx sce = SolucionisCashEx.fromJson(corpus);
     String publica = PrivateKey.fromHex(Pera.curve(), sce.ex).publicKey.toHex();
     Directory directorium = Directory('vincula/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
     List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);

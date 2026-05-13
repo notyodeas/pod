@@ -1267,15 +1267,6 @@ class ParAdRimor {
                   orupn.obstructionum.probationem,
                   PervideasNuntiusTitulus.petitioObstructionum, []).indu())}\x00');
                   List<int> b = [];
-              nervus.listen((eventus) {
-                    b.addAll(eventus);
-              while (b.contains(0)) {
-                int index = b.indexOf(0);
-                List<int> msgBytes = b.sublist(0, index);
-                buffer = buffer.sublist(index + 1);
-                String d = utf8.decode(msgBytes);
-              }
-              });
             }
           }
           }

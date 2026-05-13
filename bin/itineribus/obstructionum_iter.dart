@@ -8,6 +8,7 @@
 // import 'dart:convert';
 import 'dart:io';
 
+import 'package:ez_validator/ez_validator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'dart:convert';

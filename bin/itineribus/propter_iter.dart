@@ -17,10 +17,25 @@ import '../exempla/responsio/propter_notitia.dart';
 import '../exempla/utils.dart';
 import 'dart:io';
 import '../server.dart';
-import 'package:encoder/encoder.dart';
+import 'package:ez_validator/ez_validator.dart';
+
+// final propterSchema = object({
+//   'ex': string(),
+//   'publicaClaves': list(string())
+// }).optionals(['publicaClaves']);
+// Item schema (automatically generates the Item class)
+
+final propterSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required(),
+  'publicaClaves': EzValidator().arrayOf(EzValidator<dynamic>())
+}, noUnknown: true);
+
 
 Future<Response> propterSubmittere(Request req) async {
-  SubmitterePropter sp = SubmitterePropter.fromJson(json.decode(await req.readAsString()));
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = propterSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(BadRequest(code: 4, nuntius: 'nuntius', message: json.encode(ez) )));
+  SubmitterePropter sp = SubmitterePropter.fromJson(corpus);
   Directory directorium =
       Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}');
   List<Obstructionum> lo = await Obstructionum.getBlocks(directorium);
@@ -118,9 +133,15 @@ Future<Response> propterSubmittereMulti(Request req) async {
     "message": "all public keys have entered the pool to be defended"
   }));
 }
+final publicSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required()
+}, noUnknown: true);
 Future<Response> propterPublic(Request req) async {
+  Map<String, dynamic> corpus = json.decode(await req.readAsString());
+  final ez = publicSchema.catchErrors(corpus);
+  if (ez.isNotEmpty) return Response.badRequest(body: json.encode(ez));
   PrivatusClavis pc =
-      PrivatusClavis.fromJson(json.decode(await req.readAsString()));
+      PrivatusClavis.fromJson(corpus);
   PrivateKey pk = PrivateKey.fromHex(Pera.curve(), pc.ex);
   return Response.ok(json.encode(pk.publicKey.toHex()));
 }
@@ -145,10 +166,10 @@ Future<Response> propterStatus(Request req) async {
       for (Propter propter
           in interiore.gladiator.interiore.outputs[i].rationibus) {
         if (propter.interiore.publicaClavis == publica) {
-          bool primis = await Pera.isPrimis(publica, directory);
+          final primis = await Pera.accipereGladiatorIdentitatisPrimis(publica, directory);
           PropterNotitia propterInfo = PropterNotitia(
               true,
-              primis,
+              primis.item2,
               interiore.indicatione,
               interiore.obstructionumNumerus,
               interiore.gladiator.interiore.outputs[i].defensio,

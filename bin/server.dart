@@ -74,6 +74,8 @@ final _router = Router().plus
   ..get('/gladiator-defenditur/<publica-clavis>', gladiatorDefenditur)
   ..get('/gladiator-arma/<publica-clavis>', gladiatorArma)
   ..get('/gladiator-summa-bid-arma/<probationem>', gladiatorSummaBidArma)
+  ..get('/gladiator-arma-necessaria/<tuus-primis>/<tuus-identitatis>/<victima-primis>/<victima-identitatis>', gladiatorArmaNecessaria)
+  ..get('/gladiator-identitatis/<publica-clavis>', gladiatorIdentitatis)
   ..get('/algiator-notbid-antibationem/<antibationems>/<privatenotkeys>', algiatornotbidantibationem)
   ..post('/submittere-transactio-liber', submittereTransactioLiber)
   ..post('/submittere-transactio-fixum', submittereTransactioFixum)

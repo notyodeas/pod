@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:ez_validator/ez_validator.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
@@ -16,10 +17,18 @@ import '../exempla/utils.dart';
 import 'package:elliptic/elliptic.dart';
 import '../server.dart';
 
+final retribuereSchema = EzSchema.shape({
+  'ex': EzValidator<String>().required(),
+  'signature': EzValidator<String>().required()
+});
+
 Future<Response> profundumRetribuere(Request req) async {
   try {
+    Map<String, dynamic> map = json.decode(await req.readAsString());
+    final ez = retribuereSchema.catchErrors(map);
+    if (ez.isNotEmpty) return Response.badRequest(body: json.encode(BadRequest(code: 5, nuntius: 'nuntius', message: json.encode(ez))));
     RetribuereProfundum rp =
-        RetribuereProfundum.fromJson(json.decode(await req.readAsString()));
+        RetribuereProfundum.fromJson(map);
     List<Obstructionum> lo = await Obstructionum.getBlocks(
         Directory('${Constantes.vincula}/${argumentis!.obstructionumDirectorium}${Constantes.principalis}'));
     List<SiRemotionem> lsr = [];
