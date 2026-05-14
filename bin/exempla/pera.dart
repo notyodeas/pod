@@ -225,10 +225,12 @@ class Pera {
         await inconsumptusOutputs(true, publica, lo);
     for (Transactio tx
         in txs) {
+          print('time for tx ${tx.toJson()}');
       outs.removeWhere((element) => tx.interiore.inputs
           .any((ischin) => ischin.transactioIdentitatis == element.item2));
       for (int i = 0; i < tx.interiore.outputs.length; i++) {
         if (tx.interiore.outputs[i].publicaClavis == publica) {
+          print('gottoknowoutput');
           outs.add(Tuple3<int, String, TransactioOutput>(
               i,
               tx.interiore.identitatis,

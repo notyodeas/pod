@@ -95,7 +95,7 @@ class ParAdRimor {
   audite() async {
     List<String> sip = ip.split(':');
     ServerSocket serverNervum =
-        await ServerSocket.bind(InternetAddress.anyIPv4, int.parse(sip[1]));
+        await ServerSocket.bind(sip[0], int.parse(sip[1]));
     serverNervum.listen((clientis) {
       // clientis.setOption(SocketOption.tcpNoDelay, true);
       List<int> buffer = [];
@@ -1754,6 +1754,8 @@ class ParAdRimor {
   }
 
   Future syncBlock(Obstructionum o) async {
+    print('mined block');
+    print(json.encode(o.toJson()));
     stamina.efectusThreads.forEach((et) => et.kill(priority: Isolate.immediate));
     stamina.confussusThreads.forEach((ct) => ct.kill(priority: Isolate.immediate));
     stamina.expressiThreads.forEach((et) => et.kill(priority: Isolate.immediate));
@@ -1957,6 +1959,11 @@ class ParAdRimor {
     }
     if (!obstructionum.txOnlyOnce()) {
       Print.nota(nuntius: 'nuntius', message: 'duplicate tx found');
+      return false;
+    }
+    if (!await obstructionum.convalidandumArdeat(lo)) {
+      Print.nota(nuntius: 'nuntius', message: 'invalid ardeat');
+      Print.obstructionumReprobatus();
       return false;
     }
     if (!obstructionum.transactionsIncluduntur(lo, obstructionum)) {

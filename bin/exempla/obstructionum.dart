@@ -1112,15 +1112,15 @@ class Obstructionum {
         1) {
       return false;
     }
-    Transactio? t = interiore.liberTransactions.singleWhereOrNull(
-        (swlt) =>
-            swlt.interiore.transactioSignificatio ==
-            TransactioSignificatio.praemium);
-    if (t == null) return true;
-    if (t.interiore.outputs.length > 1) {
-      return false;
-    }
-    return t.interiore.outputs[0].pod ==
+    // Transactio? t = interiore.liberTransactions.singleWhereOrNull(
+    //     (swlt) =>
+    //         swlt.interiore.transactioSignificatio ==
+    //         TransactioSignificatio.praemium);
+    // if (t == null) return true;
+    // if (t.interiore.outputs.length > 1) {
+    //   return false;
+    // }
+    return interiore.liberTransactions.singleWhere((l) => l.interiore.transactioSignificatio == TransactioSignificatio.praemium).interiore.outputs[0].pod ==
         incipio.interiore.liberTransactions
             .singleWhere((swlt) =>
                 swlt.interiore.transactioSignificatio ==
@@ -1200,14 +1200,18 @@ class Obstructionum {
             TransactioSignificatio.transform)
         .map((mlt) => mlt.interiore.inputs)
         .forEach(ltit.addAll);
-    BigInt totalTransformLiber = BigInt.zero;
     for (TransactioInput ti in ltit) {
-      Transactio? t = plt.singleWhereOrNull((x) => x.interiore.identitatis == ti.transactioIdentitatis);
-      if (t == null) return false;
-      for (TransactioOutput to in t.interiore.outputs) {
-          totalTransformLiber += to.pod;
-          publicaClavisStatera[to.publicaClavis] = to.pod;
+      Iterable<Transactio> t = plt.takeWhile((x) => x.interiore.identitatis == ti.transactioIdentitatis || ltit.any((ti) => ti.transactioIdentitatis == x.interiore.identitatis));
+      for (Transactio tt in t) {
+          for (TransactioOutput to in tt.interiore.outputs) {
+          if (publicaClavisStatera.containsKey(to.publicaClavis)) {
+            publicaClavisStatera[to.publicaClavis] = publicaClavisStatera[to.publicaClavis]! + to.pod;
+          } else {
+            publicaClavisStatera[to.publicaClavis] = to.pod;
+          }
       }
+      }
+
     }
     
     
@@ -1218,12 +1222,23 @@ class Obstructionum {
             TransactioSignificatio.transform)
         .map((mft) => mft.interiore.outputs)
         .forEach(lto.addAll);
-    BigInt totalTransformFixum = BigInt.zero;
-    for (TransactioOutput to in lto) {
-      totalTransformFixum += to.pod;
-      if (to.pod != publicaClavisStatera[to.publicaClavis]) return false;
+      Map<String, BigInt> publicaStateraMap = Map();
+      
+      for (String publica in publicaClavisStatera.keys) {
+      for (TransactioOutput to in lto) {
+        if (to.publicaClavis == publica) {
+          if (publicaStateraMap.containsKey(publica)) {
+            publicaStateraMap[publica] = publicaStateraMap[publica]! + to.pod;
+          } else {
+            publicaStateraMap[publica] = to.pod;
+          }
+        }
+      }
     }
-    return totalTransformLiber == totalTransformFixum;
+
+    print(publicaClavisStatera);
+    return DeepCollectionEquality().equals(publicaClavisStatera, publicaStateraMap);
+    
   }
   // mab y map and addal in inner for loop have conccerns
   Future<bool> convalidandumPerdita(List<Obstructionum> lo) async {
@@ -1255,6 +1270,7 @@ class Obstructionum {
       Print.nota(nuntius: 'pecunia non uritur ante probationem', message: 'money is not burned to previous proof');
       return false;
     }
+    //toberemovedbutiamcrazyduetocode
     BigInt comburantur = BigInt.zero;
     for (TransactioOutput to in lto) {
       comburantur += to.pod;
@@ -1271,7 +1287,53 @@ class Obstructionum {
     if (scuta.every((s) => probationem.contains(s))) return true;
     return false;
   }
+  
+  Future<bool> convalidandumExpressi(List<Obstructionum> lo, Obstructionum prior)  async{
+    List<TransactioInput> elt = [];
+    interiore.expressiTransactions.map((ft) => ft.interiore.inputs).forEach(elt.addAll);
+    List<Transactio> lt = [];
+    lo.map((o) => o.interiore.liberTransactions).forEach(lt.addAll);
+    lt.addAll(interiore.expressiTransactions);
+    if (!elt.every((e) => lt.map((e) => e.interiore.identitatis).contains(e.transactioIdentitatis))) return false;
+    
+    List<Tuple2<List<TransactioOutput>, Transactio>> lto = [] ;
+    
+      for (Transactio t in lt.where((t) => elt.any((lti) => lti.transactioIdentitatis == t.interiore.identitatis))) {
+         
+      
+        for (Transactio tt in lt.where((t) => t.interiore.inputs.any((i) => i.transactioIdentitatis == t.interiore.identitatis))) {          
+            lto.add(Tuple2(tt.interiore.outputs, t));
+        }
+      }
+    for (Tuple2<List<TransactioOutput>, Transactio> tlts in lto) {
+      for (TransactioOutput to in tlts.item1) {
+        if (tlts.item2.interiore.inputs.every((i) => !Utils.cognoscereTransactioOutput(PublicKey.fromHex(Pera.curve(), tlts.item2.interiore.dominus) , Signature.fromASN1Hex(i.signature), to))) {
+          return false;
+        }
+      }
+    }
+    // if (permissum != )
+    List<String> identitatum = [];
+    interiore.liberTransactions.where((t) => t.interiore.transactioSignificatio == TransactioSignificatio.expressi).map((ft) => ft.interiore.identitatis).forEach(identitatum.add);
+    if (!prior.interiore.expressiTransactions.every((et) => identitatum.contains(et.interiore.identitatis))) return false;
+    return true;
+  }
 
+
+  Future<bool> convalidandumArdeat(List<Obstructionum> lo) async {
+    List<TransactioInput> lti = [];
+    interiore.liberTransactions.where((a) => a.interiore.transactioSignificatio == TransactioSignificatio.ardeat).map((lt) => lt.interiore.inputs).forEach(lti.addAll);
+    List<TransactioOutput> lto = [];
+    List<TransactioOutput> ltoi = [];
+    interiore.liberTransactions
+    .where((wlt) => wlt.interiore.transactioSignificatio == TransactioSignificatio.perdita)
+    .map((mlt) => mlt.interiore.outputs)
+    .forEach(ltoi.addAll);
+    for (TransactioOutput to in ltoi) {
+      if (!await Pera.isProbationum(to.publicaClavis, lo)) return false;
+    }
+    return true;
+  }
   Future<bool> vicit(List<Obstructionum> lo) async {
     GladiatorInput? gi =
         interiore.gladiator.interiore.input;
@@ -1572,6 +1634,7 @@ class Obstructionum {
     return true;
   }
   bool longitudoTeliFundamentalis() {
+    // return true;
     if (interiore.gladiator.interiore.outputs[0].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[1].defensio.length != 4) return false;
     if (interiore.gladiator.interiore.outputs[0].impetum.length != 4) return false;

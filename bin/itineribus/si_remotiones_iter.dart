@@ -27,7 +27,7 @@ class Dominium {
 final proofSchema = EzSchema.shape({
   'ex': EzValidator<String>().required(),
   'interiore': EzSchema.shape({
-      'primis': EzValidator().boolean().required(),
+      'liber': EzValidator().boolean().required(),
       'identitatis': EzValidator<String>().required()
   }, noUnknown: true)
 }, noUnknown: true);

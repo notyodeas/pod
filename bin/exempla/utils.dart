@@ -42,10 +42,11 @@ class Utils {
 
   static bool cognoscereIdentitatis(PublicKey publicaClavis, Signature signature, String identitatis) => 
       verify(publicaClavis, utf8.encode(identitatis), signature);
-  static bool cognoscereTransform(
-          PublicKey publicaClavis, Signature signature, TransactioInput ti) =>
-      verify(publicaClavis, utf8.encode(json.encode(ti.toJson())), signature);
-
+  // static bool cognoscereTransform(
+  //         PublicKey publicaClavis, Signature signature, TransactioInput ti) =>
+  //     verify(publicaClavis, utf8.encode(json.encode(ti.toJson())), signature);
+  static bool cognoscereTransactioOutput(PublicKey publicaClavis, Signature signature, TransactioOutput to) => 
+    verify(publicaClavis, utf8.encode(json.encode(to.toJson())), signature);
   static bool cognoscereSiRemotionemOutput(PublicKey publicaClavis,
           Signature signature, SiRemotionemOutput sro) =>
       verify(publicaClavis, utf8.encode(json.encode(sro.toJson())), signature);
